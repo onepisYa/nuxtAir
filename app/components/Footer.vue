@@ -4,7 +4,7 @@
 
 <template>
   <div class="bg-[#444] ">
-    <UContainer class="py-10">
+    <UContainer class="py-10 text-secondary">
       footer
     </UContainer>
   </div>

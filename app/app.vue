@@ -1,16 +1,21 @@
 <script setup lang="ts">
+import faviconUrl from '~/assets/favicon.ico'
+import { useMyRuntimeConfig, usePhoneNumber, useSiteName } from '~/composables/config'
 const route = useRoute()
+
+const sitename = useSiteName()
+
 useHead({
-  titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} - ${sitename}` : sitename
+  titleTemplate: (titleChunk?:string):string => {
+    return titleChunk ? `${titleChunk} - ${unref(sitename)}` : unref(sitename) as string
   },
+  link: [
+    { rel: 'icon', type: 'image/x-icon', href: faviconUrl },
+  ],
   meta: [
     { name: 'description', content: 'desc' },
     { name: 'keywords', content: 'keywords' },
-  ],
-  link: [
-    { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
-  ],
+  ]
 })
 </script>
 

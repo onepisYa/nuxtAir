@@ -5,8 +5,6 @@ import { createClientTokenAuthentication } from 'alova/client'
 import adapterFetch from 'alova/fetch'
 import NuxtHook from 'alova/nuxt'
 
-// const token = useCookie('token')
-// const token = useStorage('token', '')
 
 const alova = createAlova({
   statesHook: NuxtHook({
@@ -31,24 +29,27 @@ const alova = createAlova({
       }
       try {
         if (json.code === 401) {
-          // token.value = ''
           user().logout()
           return navigateTo('/?callback=error&message=未登录')
         }
+        
         if (json.code !== 200) {
-          throw new Error(json.msg)
+          throw new Error(json.msg || '请求失败')
         }
-        if (json?.data) {
-          return json.data
-        }
-        return json
+        
+        return json?.data || json
       }
-      catch (e) {
-        return Promise.reject(e.message)
+      catch (e: unknown) {
+        const error = e instanceof Error ? e : new Error(String(e))
+        // 保留完整错误对象用于调试
+        throw error
       }
     },
     onError: (error) => {
-      console.error(error)
+      console.error('网络请求错误:', error)
+      // TODO: 集成 useToast 提供用户友好的错误提示
+      // const toast = useToast()
+      // toast.add({ title: '网络错误', description: error.message, color: 'red' })
     },
   },
 })
@@ -59,12 +60,13 @@ export default function useAlova() {
   return alova
 }
 
-export const get = <T>(url: string, params?: object, config: object = { baseURL: useRuntimeConfig().public.apiHost }) => useAlova().Get(url, { params, ...config })
+export const get = <T>(url: string, params?: object, config: object = {}) => useAlova().Get(url, { params, ...config })
 
-export const post = <T>(url: string, data?: object, config: object = { baseURL: useRuntimeConfig().public.apiHost }) => useAlova().Post(url, data, config)
+// export const post = <T>(url: string, data?: object, config: object = { baseURL: useRuntimeConfig().public.apiBase}) => useAlova().Post(url, data, config)
+export const post = <T>(url: string, data?: object, config: object = {}) => useAlova().Post(url, data, config)
 
-export const del = <T>(url: string, data?: object, config: object = { baseURL }) => useAlova().Delete(url, data, config)
+export const del = <T>(url: string, data?: object, config: object = {}) => useAlova().Delete(url, data, config)
 
-export const put = <T>(url: string, data?: object, config: object = { baseURL: useRuntimeConfig().public.apiHost }) => useAlova().Put(url, data, config)
+export const put = <T>(url: string, data?: object, config: object = {}) => useAlova().Put(url, data, config)
 
 export const upload = <T>(url: string, data: { name: string, filePath: string }, config: object = {}) => useAlova().Post(url, data, { ...config })

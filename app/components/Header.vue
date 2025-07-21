@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import { useMyRuntimeConfig, usePhoneNumber, useSiteName } from '~/composables/config'
 const props = defineProps({
   flag: {
     type: Boolean,
     default: true,
   },
 })
+const  phonenumber  = usePhoneNumber()
+
 const route = useRoute()
+
 const items = computed(() => [
   { label: '首  页', to: '/', value: 'index' },
   { label: '关于我们', to: '/about', active: route.path.startsWith('/about') },
@@ -25,13 +29,15 @@ const menu = ref()
         <span class="text-xl font-bold">网站名称</span>
       </nuxt-link>
       <div class="gap-x-8 flex-center">
-        <UNavigationMenu v-model="menu" class="hidden lg:block" :items="items" highlight variant="link" />
+        <UNavigationMenu v-model="menu" class="lg:block" :items="items" highlight variant="link" />
       </div>
       <div class="gap-x-4 flex-center">
-        <UButton v-if="user().isLogin" color="success" variant="ghost" size="xl" link to="/user/info">用户名</UButton>
+        <!-- v-if="user().isLogin" -->
+        <UButton  color="success" variant="ghost" size="xl" link to="/user/info">用户名</UButton>
       </div>
-      <USlideover v-model:open="open" title="联信数科" side="right" :ui="{ width: 'w-3/4' }" class="">
-        <UButton icon="lucide:align-justify" class="lg:hidden" color="neutral" variant="ghost" />
+      <USlideover v-model:open="open" title="hello SlideOver" side="right" :ui="{ wrapper: 'w-3/4'}" class="">
+        <!-- lg:hidden -->
+        <UButton icon="lucide:align-justify" class="" color="neutral" variant="ghost" />
         <template #body>
           <UNavigationMenu class="items-center text-center" orientation="vertical" :items="items" highlight variant="link" />
           <div class="gap-x-2 mt-10 flex-center">

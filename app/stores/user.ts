@@ -50,7 +50,7 @@ export const useUserStore = defineStore('user', () => {
   // const token = useCookie('token')
   const token = ref('')
   const isLogin = computed(() => Boolean(token.value))
-  const info = ref({ ...info_template })
+  const info = ref<typeof info_template>({ ...info_template })
   // 获取用户信息
   async function getUserInfo() {
     try {
@@ -58,7 +58,7 @@ export const useUserStore = defineStore('user', () => {
       info.value = res
     }
     catch (e) {
-      info.value = {}
+      info.value = { ...info_template }
       console.error(e)
     }
   }
@@ -70,8 +70,15 @@ export const useUserStore = defineStore('user', () => {
       return navigateTo('/?callback=success&message=退出成功')
     }
     catch (e) {
-      console.log('退出失败')
-      ElMessage.error('退出失败')
+      console.error('退出失败:', e)
+      // 使用 Nuxt UI 的 useToast 替代 Element-UI
+      const toast = useToast()
+      toast.add({ 
+        title: '错误', 
+        description: '退出失败，请重试', 
+        color: 'error',
+        duration: 3000
+      })
     }
   }
 

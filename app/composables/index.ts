@@ -1,35 +1,13 @@
 import { useDayjs } from '#dayjs'
 import { useStorage as _useStorage } from '@vueuse/core'
+import { decode } from 'he'
 
-export const phonenumber = '1234567'
-export const sitename = '网站名称'
 // 处理HTML实体字符的函数
-export function decodeHtmlEntities(text: string) {
-  if (import.meta.client) {
-    // 客户端使用DOM API解码
-    const textarea = document.createElement('textarea')
-    textarea.innerHTML = text
-    return textarea.value
-  }
-  else {
-    // 服务端使用正则表达式解码常见HTML实体
-    return text
-      .replace(/&quot;/g, '"')
-      .replace(/&ldquo;/g, '"')
-      .replace(/&rdquo;/g, '"')
-      .replace(/&lsquo;/g, '\'')
-      .replace(/&rsquo;/g, '\'')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&mdash;/g, '—')
-      .replace(/&ndash;/g, '–')
-      .replace(/&hellip;/g, '…')
-      .replace(/&#(\d+);/g, (match, dec) => {
-        return String.fromCharCode(dec)
-      })
-  }
+// 使用 he 库确保SSR和CSR行为完全一致
+export function decodeHtmlEntities(text: string): string {
+  // 统一使用 he 库进行HTML实体解码
+  // 确保服务端和客户端行为完全一致、无需判断后分别处理
+  return decode(text)
 }
 
 export const user = useUserStore
@@ -39,3 +17,5 @@ export const parseDate = (date: string) => dayjs(date).format('YYYY-MM-DD')
 
 export const useStorage = _useStorage
 
+// 检查是否在客户端环境
+export const isClient = import.meta.client
