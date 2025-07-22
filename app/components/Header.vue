@@ -35,7 +35,9 @@ const menu = ref()
         <!-- v-if="user().isLogin" -->
         <UButton  color="success" variant="ghost" size="xl" link to="/user/info">用户名</UButton>
       </div>
-      <USlideover v-model:open="open" title="hello SlideOver" side="right" :ui="{ wrapper: 'w-3/4'}" class="">
+      <USlideover v-model:open="open" title="标题 hello SlideOver" side="right" :ui="{ wrapper: 'w-3/4'}" class=""
+        description="描述 Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      >
         <!-- lg:hidden -->
         <UButton icon="lucide:align-justify" class="" color="neutral" variant="ghost" />
         <template #body>
@@ -50,9 +52,7 @@ const menu = ref()
       </USlideover>
     </UContainer>
     <UContainer v-if="props.flag" class="flex-center">
-
-
-
+      <!-- 旗子 -->
     </UContainer>
   </div>
 </template>

@@ -1,3 +1,33 @@
 {
-  "welcome": "Welcome {count}"
+  "welcome": "Welcome {count}",
+  "greeting": "hello，{name}!",
+  "seo": {
+    "title": "NuxtAir - Modern Web Application",
+    "description": "A modern, fast, and SEO-optimized web application built with Nuxt.js and Vue.js",
+    "ogTitle": "NuxtAir - Experience the Future of Web",
+    "ogDescription": "Discover our cutting-edge web application with internationalization support and modern design",
+    "keywords": "nuxt, vue, web application, modern, fast, SEO"
+  },
+  "pages": {
+    "home": {
+      "title": "Home",
+      "description": "Welcome to NuxtAir - your gateway to modern web experiences",
+      "subtitle": "Your Gateway to Modern Web Experiences",
+      "ogTitle": "NuxtAir - Your Gateway to Modern Web",
+      "ogDescription": "Experience the future of web development with our modern, fast, and SEO-optimized application"
+    },
+    "about": {
+      "title": "About Us",
+      "description": "Learn more about our mission and values",
+      "content": "We are dedicated to creating exceptional web experiences using the latest technologies.",
+      "ogTitle": "About NuxtAir - Our Mission",
+      "ogDescription": "Discover our commitment to creating exceptional web experiences using cutting-edge technologies"
+    },
+    "blog": {
+      "title": "Blog",
+      "description": "Read our latest articles and insights",
+      "ogTitle": "NuxtAir Blog - Latest Insights",
+      "ogDescription": "Stay updated with our latest articles on web development, technology trends, and best practices"
+    }
+  }
 }

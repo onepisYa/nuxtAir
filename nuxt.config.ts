@@ -9,7 +9,13 @@ type LocaleFilesArray = LocaleFileConfig[]
 const forceLocaleFiles = (files: LocaleFilesArray): LocaleFilesArray => files
 
 export default defineNuxtConfig({
-
+  // 站点配置 - Nuxt SEO 核心配置
+  site: {
+    url: process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com',
+    name: process.env.NUXT_PUBLIC_SITENAME || 'NuxtAir',
+    description: 'A modern Nuxt.js application with i18n and SEO optimization',
+    defaultLocale: 'en-US' // 与 i18n 默认语言保持一致
+  },
   modules: [
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
@@ -21,21 +27,27 @@ export default defineNuxtConfig({
     // '@element-plus/nuxt',
     'dayjs-nuxt',
     '@nuxtjs/i18n', // 添加 i18n 模块
+    '@nuxtjs/seo', // 添加 SEO 模块 - 必须在 @nuxt/content 之前 这个网站没有 markdown 内容需要渲染、不用  nuxt/content 模块
+    'nuxt-schema-org'
   ],
   // i18n 配置
   i18n: {
     strategy: 'prefix_except_default', // 默认语言不添加前缀，其他语言添加前缀
+    baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com', // SEO 必需：生成完整的 alternate URLs
     locales: [
       {
         code: 'en-US', 
         iso: 'en-US',
+        language: 'en-US', // 用于生成 hreflang 标签
         name: 'English',
         dir: 'ltr',
-        file: 'en-US.json'
+        file: 'en-US.json',
+        isCatchallLocale: true // 设置为 catchall locale
       },
       {
         code: 'zh-CN',
         iso: 'zh-CN',
+        language: 'zh-CN', // 用于生成 hreflang 标签
         name: '简体中文', 
         dir: 'ltr',
         files: forceLocaleFiles([{path: 'zh-CN.json', cache: true}, 'zh-CN.js']) as any  // 强制绕过官方类型检查，使用混合类型、这里是官方的类型写的不合理
@@ -53,6 +65,40 @@ export default defineNuxtConfig({
     vueI18n: 'i18n.config.ts' // Vue I18n 配置文件、也是相对于 restructureDir (默认为 'i18n')
   },
 
+  // SEO 模块配置
+  sitemap: {
+    sources: ['/api/__sitemap__/urls'],
+    exclude: [
+      '/admin/**',
+      '/dev-api/**',
+      '/prod-api/**'
+    ]
+  },
+
+  robots: {
+    groups: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/admin', '/dev-api', '/prod-api']
+      }
+    ],
+    sitemap: `${process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'}/sitemap.xml`
+  },
+
+  ogImage: {
+    enabled: true,
+    defaults: {
+      component: 'OgImageDefault',
+      width: 1200,
+      height: 630
+    }
+  },
+
+  seo: {
+    // SEO Utils 配置
+    automaticDefaults: true
+  },
   // ssr: false,
   ssr: true,
   imports: {
@@ -115,10 +161,10 @@ export default defineNuxtConfig({
     // https://nuxt.com/docs/4.x/api/nuxt-config#nitro
     // preset: 'static',
     preset: 'node-server',
-    // prerender: {
-    //   crawlLinks: true,
-    //   routes: ['/'],
-    // },
+    prerender: {
+      //   crawlLinks: true,
+      routes: ['/sitemap.xml']
+    },
   },
   vite: {
     vue: {
@@ -132,6 +178,9 @@ export default defineNuxtConfig({
           // additionalData: '@use "@/assets/element.scss" as element;',
         },
       },
+    },
+    build: {
+      sourcemap: false, // 禁用 sourcemap 以避免 Tailwind CSS 插件警告、tailwind CSS v4.1.10 因为版本比较新 所以先禁用。并且在生产环境中、通常是是不需要 sourcemap 的
     },
   },
   typescript: {

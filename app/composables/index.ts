@@ -1,13 +1,13 @@
 import { useDayjs } from '#dayjs'
 import { useStorage as _useStorage } from '@vueuse/core'
-import { decode } from 'he'
+import he from 'he'
 
 // 处理HTML实体字符的函数
 // 使用 he 库确保SSR和CSR行为完全一致
 export function decodeHtmlEntities(text: string): string {
   // 统一使用 he 库进行HTML实体解码
   // 确保服务端和客户端行为完全一致、无需判断后分别处理
-  return decode(text)
+  return he.decode(text)
 }
 
 export const user = useUserStore

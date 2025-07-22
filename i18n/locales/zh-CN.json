@@ -1,3 +1,32 @@
 {
-  "welcome": "欢迎 {count}"
+  "welcome": "欢迎 {count}",
+  "seo": {
+    "title": "NuxtAir - 现代化网络应用",
+    "description": "基于 Nuxt.js 和 Vue.js 构建的现代化、快速且 SEO 优化的网络应用",
+    "ogTitle": "NuxtAir - 体验网络的未来",
+    "ogDescription": "探索我们支持国际化和现代设计的前沿网络应用",
+    "keywords": "nuxt, vue, 网络应用, 现代化, 快速, SEO"
+  },
+  "pages": {
+    "home": {
+      "title": "首页",
+      "description": "欢迎来到 NuxtAir - 您通往现代网络体验的门户",
+      "subtitle": "您通往现代网络体验的门户",
+      "ogTitle": "NuxtAir - 您的现代网络门户",
+      "ogDescription": "体验我们现代化、快速且 SEO 优化的网络应用的未来"
+    },
+    "about": {
+      "title": "关于我们",
+      "description": "了解更多关于我们的使命和价值观",
+      "content": "我们致力于使用最新技术创造卓越的网络体验。",
+      "ogTitle": "关于 NuxtAir - 我们的使命",
+      "ogDescription": "了解我们致力于使用前沿技术创造卓越网络体验的承诺"
+    },
+    "blog": {
+      "title": "博客",
+      "description": "阅读我们最新的文章和见解",
+      "ogTitle": "NuxtAir 博客 - 最新见解",
+      "ogDescription": "关注我们关于网络开发、技术趋势和最佳实践的最新文章"
+    }
+  }
 }

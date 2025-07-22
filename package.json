@@ -3,13 +3,19 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "nuxt dev --host",
+    "dev": "nuxi dev --host",
     "generate": "nuxi generate --dotenv .env.production && node zip.js",
-    "build": "nuxt build",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "build": "nuxi build",
+    "build:prod": "nuxi build --dotenv .env.production",
+    "preview": "nuxi preview",
+    "postinstall": "nuxi prepare",
     "serve": "serve .output/public",
-    "up": "npx taze major -I"
+    "up": "npx taze major -I",
+    "typecheck": "nuxi typecheck",
+    "nuxi": "nuxi",
+    "seo:validate": "node scripts/seo-validator.js",
+    "seo:check": "npm run seo:validate",
+    "seo:test": "npm run build && npm run seo:validate"
   },
   "dependencies": {
     "@antfu/eslint-config": "^4.14.1",
@@ -38,6 +44,7 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "nuxi": "^3.26.4",
     "@iconify-json/ep": "^1.2.2",
     "@iconify-json/ic": "^1.2.2",
     "@iconify-json/lucide": "^1.2.47",
