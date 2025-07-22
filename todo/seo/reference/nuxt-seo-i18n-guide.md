@@ -479,6 +479,8 @@ useSeoMeta({
     ```
     
     然后在页面中使用 `defineOgImageComponent` 来引用此组件并传递翻译键：
+
+    defineOgImage 也是可以的、不过在最新版本中我们更偏好于 defineOgImageComponent 、因为它能提供更高的类型安全性。
     
     代码段
     
