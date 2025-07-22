@@ -92,7 +92,18 @@ export default defineNuxtConfig({
       component: 'OgImageDefault',
       width: 1200,
       height: 630
-    }
+    },
+    googleFontMirror: true, // 解决字体下载问题
+    fonts: [
+      // 根据官方文档使用正确的字体配置格式
+      'Inter:400',
+      'Inter:700',
+      'Noto+Sans:400',
+      'Noto+Sans:700',
+      // 添加中文字体支持
+      'Noto+Sans+SC:400',
+      'Noto+Sans+SC:700'
+    ]
   },
 
   seo: {

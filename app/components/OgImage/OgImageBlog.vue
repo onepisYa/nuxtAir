@@ -75,7 +75,7 @@ const formattedDate = computed(() => {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Noto Sans SC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .blog-bg-gradient {

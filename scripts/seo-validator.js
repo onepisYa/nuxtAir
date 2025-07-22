@@ -7,8 +7,7 @@
 
 import fs from 'fs'
 import path from 'path'
-import https from 'https'
-import { execSync } from 'child_process'
+
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 

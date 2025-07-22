@@ -153,9 +153,75 @@ useSeoMeta({
 </script>
 ```
 
+### Q6: OG Image 中文字符显示异常
+
+**症状**: 动态生成的 OG Image 中，中文字符显示为方块或乱码
+
+**可能原因**:
+1. Satori 渲染器缺少中文字体支持
+2. OG Image 组件未配置中文字体
+3. 字体加载配置不正确
+
+**解决方案**:
+
+1. **在 nuxt.config.ts 中添加中文字体支持**:
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  ogImage: {
+    fonts: [
+      'Inter:400',
+      'Inter:700',
+      'Noto+Sans:400',
+      'Noto+Sans:700',
+      'Noto+Sans+SC:400',  // 添加简体中文字体
+      'Noto+Sans+SC:700'   // 添加简体中文粗体
+    ]
+  }
+})
+```
+
+2. **在 OG Image 组件中配置字体样式**:
+```vue
+<!-- components/OgImage/OgImageTest.vue -->
+<template>
+  <div class="test-og-container">
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+    <div class="author">{{ author }}</div>
+  </div>
+</template>
+
+<style scoped>
+.test-og-container {
+  font-family: 'Noto Sans SC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* 其他样式... */
+}
+</style>
+```
+
+3. **重启开发服务器**:
+```bash
+npm run dev
+```
+
+**验证方法**:
+- 访问 OG Image 测试页面检查显示效果
+- 使用 curl 命令测试 OG Image 生成：
+```bash
+curl "http://localhost:4000/__og-image__/image/OgImageTest/og-image.png?title=测试中文标题&description=这是中文描述&author=中文作者" -o test-chinese-og.png
+```
+
+**支持的中文字体**:
+- `Noto Sans SC`: 简体中文
+- `Noto Sans TC`: 繁体中文
+- `Noto Sans CJK`: 全面支持中日韩文字
+
+> **注意**: 字体配置修改后需要重启开发服务器才能生效。
+
 ## 🗺️ Sitemap 相关问题
 
-### Q6: 站点地图没有包含所有页面
+### Q7: 站点地图没有包含所有页面
 
 **症状**: 生成的 sitemap.xml 缺少某些页面
 
@@ -188,7 +254,7 @@ export default defineSitemapEventHandler(async () => {
 })
 ```
 
-### Q7: 多语言站点地图结构不正确
+### Q8: 多语言站点地图结构不正确
 
 **症状**: 没有生成 sitemap_index.xml 或语言特定的站点地图
 
@@ -209,7 +275,7 @@ i18n: {
 
 ## 🤖 Robots.txt 相关问题
 
-### Q8: robots.txt 没有包含多语言路径
+### Q9: robots.txt 没有包含多语言路径
 
 **症状**: robots.txt 中的规则没有自动应用到所有语言版本
 
@@ -233,7 +299,7 @@ robots: {
 
 ## 📊 Schema.org 相关问题
 
-### Q9: 结构化数据验证失败
+### Q10: 结构化数据验证失败
 
 **症状**: Google Rich Results Test 显示错误或警告
 
@@ -273,7 +339,7 @@ useSchemaOrg([
 </script>
 ```
 
-### Q10: 结构化数据重复
+### Q11: 结构化数据重复
 
 **症状**: 同一页面出现多个相同类型的结构化数据
 
@@ -298,7 +364,7 @@ if (process.client && $router.currentRoute.value.name === 'index') {
 
 ## ⚡ 性能相关问题
 
-### Q11: SEO 配置导致页面加载缓慢
+### Q12: SEO 配置导致页面加载缓慢
 
 **症状**: 添加 SEO 配置后，页面首次加载时间明显增加
 
@@ -327,7 +393,7 @@ onMounted(() => {
 </script>
 ```
 
-### Q12: OG 图片生成太慢
+### Q13: OG 图片生成太慢
 
 **症状**: 动态 OG 图片生成时间过长，影响页面性能
 
@@ -351,7 +417,7 @@ ogImage: {
 
 ## 🔧 开发环境问题
 
-### Q13: 开发环境下 SEO 功能不正常
+### Q14: 开发环境下 SEO 功能不正常
 
 **症状**: 在开发环境中，某些 SEO 功能（如 OG 图片）无法正常工作
 
@@ -378,7 +444,7 @@ export default defineNuxtConfig({
 
 ## 🚀 部署相关问题
 
-### Q14: 生产环境 SEO 功能失效
+### Q15: 生产环境 SEO 功能失效
 
 **症状**: 本地开发正常，部署后 SEO 功能不工作
 

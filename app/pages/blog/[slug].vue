@@ -114,7 +114,7 @@ useSchemaOrg([
   })
 ])
 
-const breaditems = computed(() => [
+const breadItems  = computed(() => [
   { label: t('pages.home.title'), to: '/' },
   { label: t('pages.blog.title'), to: '/blog' },
   { label: post.value?.title, to: route.path },
@@ -126,7 +126,7 @@ const breaditems = computed(() => [
     <UContainer>
       <div class="flex items-center gap-x-4 py-6">
         <UIcon name="lucide:file-text" class="text-2xl text-primary"/>
-        <UBreadcrumb :items="breaditems" class="text-lg"/>
+        <UBreadcrumb :items="breadItems" class="text-lg"/>
       </div>
       
       <article class="bg-white rounded-lg shadow-sm p-8 max-w-4xl mx-auto">

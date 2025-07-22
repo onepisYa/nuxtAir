@@ -50,36 +50,34 @@ useHead({
 // 添加复杂的结构化数据（如果模块可用）
 if (isClient) {
   try {
-    // 注意：useSchemaOrg 需要 @nuxtseo/module 正确配置
-    // 这里暂时注释掉，等模块正确安装后启用
-    // useSchemaOrg([
-    //   defineWebPage({
-    //     '@type': 'WebPage',
-    //     name: () => `SEO Test Page - ${locale.value}`,
-    //     description: () => `Comprehensive SEO testing page with i18n support`,
-    //     inLanguage: () => locale.value,
-    //     url: () => `https://example.com${route.path}`,
-    //     mainEntity: {
-    //       '@type': 'Article',
-    //       headline: () => `SEO Testing Guide - ${locale.value}`,
-    //       author: {
-    //         '@type': 'Organization',
-    //         name: 'NuxtAir Team'
-    //       },
-    //       datePublished: '2024-01-15',
-    //       dateModified: '2024-01-15'
-    //     }
-    //   }),
-    //   defineOrganization({
-    //     name: 'NuxtAir',
-    //     url: 'https://example.com',
-    //     logo: 'https://example.com/logo.png',
-    //     sameAs: [
-    //       'https://twitter.com/nuxtair',
-    //       'https://github.com/nuxtair'
-    //     ]
-    //   })
-    // ])
+    useSchemaOrg([
+      defineWebPage({
+        '@type': 'WebPage',
+        name: () => `SEO Test Page - ${locale.value}`,
+        description: () => `Comprehensive SEO testing page with i18n support`,
+        inLanguage: locale.value,
+        url: () => `https://example.com${route.path}`,
+        mainEntity: {
+          '@type': 'Article',
+          headline: () => `SEO Testing Guide - ${locale.value}`,
+          author: {
+            '@type': 'Organization',
+            name: 'NuxtAir Team'
+          },
+          datePublished: '2024-01-15',
+          dateModified: '2024-01-15'
+        }
+      }),
+      defineOrganization({
+        name: 'NuxtAir',
+        url: 'https://example.com',
+        logo: 'https://example.com/logo.png',
+        sameAs: [
+          'https://twitter.com/nuxtair',
+          'https://github.com/nuxtair'
+        ]
+      })
+    ])
   } catch (error) {
     console.warn('Schema.org module not available:', error)
   }
@@ -124,7 +122,7 @@ const seoChecks = computed(() => [
   }
 ])
 
-const breaditems = computed(() => [
+const breadItems = computed(() => [
   { label: t('pages.home.title'), to: '/' },
   { label: 'SEO Test', to: route.path },
 ])
@@ -135,7 +133,7 @@ const breaditems = computed(() => [
     <UContainer>
       <div class="flex items-center gap-x-4 py-6">
         <UIcon name="lucide:search" class="text-2xl text-primary"/>
-        <UBreadcrumb :items="breaditems" class="text-lg"/>
+        <UBreadcrumb :items="breadItems" class="text-lg"/>
       </div>
       
       <div class="bg-white rounded-lg shadow-sm p-8">

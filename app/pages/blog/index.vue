@@ -63,7 +63,7 @@ const blogPosts = computed(() => [
   }
 ])
 
-const breaditems = computed(() => [
+const breadItems = computed(() => [
   { label: t('pages.home.title'), to: '/' },
   { label: t('pages.blog.title'), to: useRoute().path },
 ])
@@ -74,7 +74,7 @@ const breaditems = computed(() => [
     <UContainer>
       <div class="flex items-center gap-x-4 py-6">
         <UIcon name="lucide:book-open" class="text-2xl text-primary"/>
-        <UBreadcrumb :items="breaditems" class="text-lg"/>
+        <UBreadcrumb :items="breadItems" class="text-lg"/>
       </div>
       
       <div class="bg-white rounded-lg shadow-sm p-8">

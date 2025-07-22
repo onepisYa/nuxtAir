@@ -51,7 +51,7 @@ useSchemaOrg([
   })
 ])
 
-const breaditems = computed(() => [
+const breadItems = computed(() => [
   { label: t('pages.home.title'), to: '/' },
   { label: t('pages.about.title'), to: useRoute().path },
 ])
@@ -63,7 +63,7 @@ const breaditems = computed(() => [
       <!-- 面包屑导航 -->
       <div class="flex items-center gap-x-4 py-6">
         <UIcon name="ep:location" class="text-2xl text-primary"/>
-        <UBreadcrumb :items="breaditems" class="text-lg"/>
+        <UBreadcrumb :items="breadItems" class="text-lg"/>
       </div>
       
       <!-- 主要内容区域 -->

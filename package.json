@@ -36,23 +36,25 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "archiver": "^7.0.1",
-    "typescript": "^5.8.3",
     "@antfu/eslint-config": "^4.14.1",
-    "@nuxt/eslint": "1.4.1",
-    "nuxi": "^3.26.4",
+    "@css-inline/css-inline": "^0.16.0",
+    "@css-inline/css-inline-wasm": "^0.16.0",
     "@iconify-json/ep": "^1.2.2",
     "@iconify-json/ic": "^1.2.2",
     "@iconify-json/lucide": "^1.2.47",
-    "@nuxtjs/seo": "^3.1.0",
+    "@nuxt/eslint": "1.4.1",
     "@nuxtjs/i18n": "10.0.1",
+    "@nuxtjs/seo": "^3.1.0",
     "@types/he": "^1.2.3",
+    "archiver": "^7.0.1",
     "eslint": "^9.29.0",
     "eslint-plugin-format": " ^1.0.1",
     "eslint-plugin-vue": "^10.2.0",
+    "nuxi": "^3.26.4",
     "sass-embedded": "^1.89.2",
+    "strip": "^3.0.0",
     "tailwindcss": "^4.1.10",
-    "vite-plugin-eslint2": "^5.0.3",
-    "strip": "^3.0.0"
+    "typescript": "^5.8.3",
+    "vite-plugin-eslint2": "^5.0.3"
   }
 }

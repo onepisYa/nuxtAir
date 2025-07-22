@@ -297,9 +297,89 @@ const props = defineProps({
 </script>
 ```
 
+### 9. OG Image 中文字体显示问题修复
+
+**问题描述**: 动态生成的 OG Image 中，中文字符显示为方块或乱码
+
+**根本原因**: 
+- Satori 渲染器缺少中文字体支持
+- OG Image 组件未配置中文字体族
+- 字体加载配置不完整
+
+**修复内容**:
+- ✅ 在 `nuxt.config.ts` 中添加了 `Noto Sans SC` 中文字体支持
+- ✅ 更新了 `OgImageTest.vue` 组件的字体样式配置
+- ✅ 验证了中文字符在 OG Image 中的正确显示
+
+**修复前**:
+```typescript
+// nuxt.config.ts - 缺少中文字体
+ogImage: {
+  fonts: [
+    'Inter:400',
+    'Inter:700',
+    'Noto+Sans:400',
+    'Noto+Sans:700'
+  ]
+}
+```
+
+```vue
+<!-- components/OgImage/OgImageTest.vue - 系统字体 -->
+<style scoped>
+.test-og-container {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+</style>
+```
+
+**修复后**:
+```typescript
+// nuxt.config.ts - 添加中文字体支持
+ogImage: {
+  fonts: [
+    'Inter:400',
+    'Inter:700',
+    'Noto+Sans:400',
+    'Noto+Sans:700',
+    'Noto+Sans+SC:400',  // 简体中文字体
+    'Noto+Sans+SC:700'   // 简体中文粗体
+  ]
+}
+```
+
+```vue
+<!-- components/OgImage/OgImageTest.vue - 中文字体优先 -->
+<style scoped>
+.test-og-container {
+  font-family: 'Noto Sans SC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+</style>
+```
+
+**验证方法**:
+```bash
+# 测试中文 OG Image 生成
+curl "http://localhost:4000/__og-image__/image/OgImageTest/og-image.png?title=测试中文标题&description=这是中文描述&author=中文作者" -o test-chinese-og.png
+
+# 检查生成的图片
+file test-chinese-og.png
+# 输出: test-chinese-og.png: PNG image data, 1200 x 630, 8-bit/color RGBA, non-interlaced
+```
+
+**支持的中文字体**:
+- `Noto Sans SC`: 简体中文（推荐）
+- `Noto Sans TC`: 繁体中文
+- `Noto Sans CJK`: 全面支持中日韩文字
+
+**注意事项**:
+- 字体配置修改后需要重启开发服务器
+- 建议在字体族中保留英文字体作为后备
+- 可以根据需要添加其他语言的字体支持
+
 ## 🔄 中间件配置修复
 
-### 9. i18n 重定向中间件问题
+### 10. i18n 重定向中间件问题
 
 **问题描述**: 中间件配置导致路由错误
 
@@ -328,6 +408,7 @@ const props = defineProps({
 - Sitemap 自动生成（/sitemap.xml）
 - Robots.txt 自动生成（/robots.txt）
 - OG Image 动态生成功能已配置
+- **OG Image 中文字体支持已完成**（支持简体中文字符正确显示）
 - 项目构建成功，开发服务器正常运行
 
 ### 📁 文件结构
