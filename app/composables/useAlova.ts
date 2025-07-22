@@ -1,10 +1,8 @@
-import { useCookie } from '#app'
-import { useStorage } from '@vueuse/core'
 import { createAlova } from 'alova'
-import { createClientTokenAuthentication } from 'alova/client'
 import adapterFetch from 'alova/fetch'
 import NuxtHook from 'alova/nuxt'
-
+// import { createClientTokenAuthentication } from 'alova/client'
+// import { useCookie } from '#app'
 
 const alova = createAlova({
   statesHook: NuxtHook({

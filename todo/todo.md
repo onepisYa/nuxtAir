@@ -95,10 +95,13 @@
 }
 ```
 
-# 暂时仅处理以下待x
+# 暂时仅处理以下待
 - [x] 国际化处理 nuxt i18 方案探索
   - [x] 创建完整的国际化实施方案文档 `todo/i18n-implementation-guide.md`
   - [x] 包含 @nuxtjs/i18n 模块配置、语言文件结构、组件改造指南
   - [x] 提供中英文翻译文件模板和最佳实践建议
-- [ ] 🚧 根据 `todo/i18n-implementation-guide.md` 开始实施国际化方案
+- [x] 实现 i18n 与 seo 方案的整合
+- [x] 整理相关文档和实施步骤、沉淀技术文档。
+
+
 - [ ] 了解 https://nuxt.com/docs/4.x/api/nuxt-config#nitro 中提到了 ssr 相关配置、需要了解。比如部署到自己的服务器上的时候、需要怎么做。

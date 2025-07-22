@@ -1,5 +1,4 @@
 import { useDayjs } from '#dayjs'
-import { useStorage as _useStorage } from '@vueuse/core'
 import he from 'he'
 
 // 处理HTML实体字符的函数
@@ -14,8 +13,6 @@ export const user = useUserStore
 export const delHtmlTag = (html: string) => decodeHtmlEntities(html.replace(/<[^>]+>/g, ''))
 export const dayjs = useDayjs()
 export const parseDate = (date: string) => dayjs(date).format('YYYY-MM-DD')
-
-export const useStorage = _useStorage
 
 // 检查是否在客户端环境
 export const isClient = import.meta.client

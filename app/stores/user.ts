@@ -1,4 +1,3 @@
-import { useStorage } from '@vueuse/core'
 
 const info_template = {
   id: '',
