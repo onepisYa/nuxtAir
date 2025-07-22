@@ -55,6 +55,7 @@
     "strip": "^3.0.0",
     "tailwindcss": "^4.1.10",
     "typescript": "^5.8.3",
-    "vite-plugin-eslint2": "^5.0.3"
+    "vite-plugin-eslint2": "^5.0.3",
+    "vue-tsc": "^3.0.3"
   }
 }
