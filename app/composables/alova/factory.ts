@@ -123,7 +123,7 @@ function createEnhancedBaseConfig() {
     statesHook: NuxtHook({
       nuxtApp: useNuxtApp,
     }),
-    cacheLogger: null,
+    cacheLogger: true,
     cacheFor: {
       GET: 0,
     },

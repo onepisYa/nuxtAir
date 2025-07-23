@@ -115,7 +115,7 @@ const alova = createAlova({
   statesHook: NuxtHook({
     nuxtApp: useNuxtApp,
   }),
-  cacheLogger: null,
+  cacheLogger: true,
   cacheFor: {
     GET: 0,
   },
@@ -154,7 +154,7 @@ function createRawAlova() {
     statesHook: NuxtHook({
       nuxtApp: useNuxtApp,
     }),
-    cacheLogger: null,
+    cacheLogger: true,
     cacheFor: {
       GET: 0,
     },
