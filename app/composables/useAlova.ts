@@ -14,8 +14,8 @@ import NuxtHook from 'alova/nuxt'
 export function processResponseAndValidate(response: Response, method: any, json: any) {
   // HTTP 状态码检查
   // TODO: 完成之后、将 !== 200 替换为以下逻辑
-  // response.status < 200 || response.status >= 300
-  if (response.status !== 200 ) {
+  if (response.status < 200 || response.status >= 300) {
+  // if (response.status !== 200 ) {
     const errorDetails = {
       status: response.status,
       statusText: response.statusText,
@@ -36,7 +36,7 @@ export function processResponseAndValidate(response: Response, method: any, json
   }
   
   // 检查是否是测试 API 请求（jsonplaceholder）
-  const isTestApi = method.url.includes('/test-api') || method.meta?.isTestApi
+  const isTestApi = method.url.includes('/test-api') || method.meta?.isTestApi || method.baseURL === '/test-api'
   
   // 如果是测试 API，直接返回原始数据，不进行业务逻辑处理
   if (isTestApi) {

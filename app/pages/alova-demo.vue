@@ -16,7 +16,7 @@
         <UCard>
           <template #header>
             <div class="flex justify-between items-center">
-              <h2 class="text-xl font-semibold">Main 实例测试（/test-api 前缀）</h2>
+              <h2 class="text-xl font-semibold">Main 实例测试(根据 apiBase )代理发送请求 </h2>
               <UButton 
                 @click="runMainInstanceTest" 
                 :loading="mainInstanceTesting"
@@ -49,7 +49,7 @@
             </div>
             
             <div v-if="!mainInstanceResults && !mainInstanceTesting" class="text-center text-gray-500 dark:text-gray-400">
-              点击上方按钮测试 Main 实例功能（使用 /test-api 前缀）
+              点击上方按钮测试 Main 实例功能
             </div>
           </div>
         </UCard>
@@ -167,8 +167,8 @@
           <div class="space-y-4">
             <div v-if="convenienceResults" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div 
-                v-for="(result, method) in convenienceResults" 
-                :key="method"
+                v-for="(result, index) in convenienceResults.results" 
+                :key="index"
                 class="p-4 rounded-lg border"
                 :class="result.success ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' : 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20'"
               >
@@ -177,7 +177,7 @@
                     :name="result.success ? 'i-heroicons-check-circle' : 'i-heroicons-x-circle'" 
                     :class="result.success ? 'text-green-500' : 'text-red-500'"
                   />
-                  <span class="font-medium uppercase">{{ method }}</span>
+                  <span class="font-medium uppercase">{{result.name}} </span>
                 </div>
                 <p class="text-sm mt-1" :class="result.success ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
                   {{ result.success ? '便捷方法测试通过' : result.error }}
@@ -209,8 +209,8 @@
           <div class="space-y-4">
             <div v-if="basicApiResults" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div 
-                v-for="(result, method) in basicApiResults" 
-                :key="method"
+                v-for="(result, index) in basicApiResults.results" 
+                :key="index"
                 class="p-4 rounded-lg border"
                 :class="result.success ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' : 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20'"
               >
@@ -219,7 +219,7 @@
                     :name="result.success ? 'i-heroicons-check-circle' : 'i-heroicons-x-circle'" 
                     :class="result.success ? 'text-green-500' : 'text-red-500'"
                   />
-                  <span class="font-medium uppercase">{{ method }}</span>
+                  <span class="font-medium uppercase">{{ result.name}}</span>
                 </div>
                 <p class="text-sm mt-1" :class="result.success ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
                   {{ result.success ? 'API 测试通过' : result.error }}
@@ -759,20 +759,17 @@ async function runAllTests() {
   try {
     // 运行新架构的所有测试
     const results = await newRunAllTests()
-    
-    // 计算测试统计
-    const allResults = Object.values(results).flat()
-    const total = allResults.length
-    const passed = allResults.filter((r: any) => r.success).length
-    const failed = total - passed
-    const successRate = total > 0 ? Math.round((passed / total) * 100) : 0
+
+    // 直接使用 newRunAllTests 返回的 overall 统计数据
+    // newRunAllTests 返回的结构: { basicApi: {results: []}, convenienceMethods: {results: []}, overall: {} }
+    const { total, success, failed, successRate } = results.overall
     
     allTestsResults.value = {
       results,
       total,
-      passed,
+      passed: success,
       failed,
-      successRate
+      successRate: Math.round(successRate)
     }
     
     console.log('所有测试完成:', allTestsResults.value)

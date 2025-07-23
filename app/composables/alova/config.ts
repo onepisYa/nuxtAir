@@ -14,6 +14,27 @@ import NuxtHook from 'alova/nuxt'
 import type { ServicePrefixes, EnvironmentConfig } from './types'
 
 /**
+ * 预定义的服务前缀常量
+ * 
+ * 这些常量可以在编译时确定，提供更好的类型安全性
+ */
+export const DEFAULT_SERVICE_PREFIXES = {
+  USER: '/user',
+  ORDER: '/order',
+  PAYMENT: '/payment',
+  PRODUCT: '/product'
+} as const
+
+/**
+ * 预定义的 API 基础路径常量
+ */
+export const DEFAULT_API_BASES = {
+  DEV: '/test-api',
+  PROD: '/api',
+  TEST: '/test-api'
+} as const
+
+/**
  * 智能获取服务前缀映射
  * 
  * 该函数根据运行环境智能获取配置，支持 apiBase 与 servicePrefix 拼接
@@ -29,40 +50,61 @@ export function getServicePrefixes(): ServicePrefixes {
   let productServicePrefix: string
   
   // 根据环境选择配置获取方式
-  if (process.server || import.meta.server) {
+  if (import.meta.server) {
     // 服务端直接使用环境变量
-    apiBase = process.env.NUXT_PUBLIC_API_BASE || '/test-api'
-    userServicePrefix = process.env.NUXT_PUBLIC_USER_SERVICE_PREFIX || '/user'
-    orderServicePrefix = process.env.NUXT_PUBLIC_ORDER_SERVICE_PREFIX || '/order'
-    paymentServicePrefix = process.env.NUXT_PUBLIC_PAYMENT_SERVICE_PREFIX || '/payment'
-    productServicePrefix = process.env.NUXT_PUBLIC_PRODUCT_SERVICE_PREFIX || '/product'
+    apiBase = process.env.NUXT_PUBLIC_API_BASE || DEFAULT_API_BASES.DEV
+    userServicePrefix = process.env.NUXT_PUBLIC_USER_SERVICE_PREFIX || DEFAULT_SERVICE_PREFIXES.USER
+    orderServicePrefix = process.env.NUXT_PUBLIC_ORDER_SERVICE_PREFIX || DEFAULT_SERVICE_PREFIXES.ORDER
+    paymentServicePrefix = process.env.NUXT_PUBLIC_PAYMENT_SERVICE_PREFIX || DEFAULT_SERVICE_PREFIXES.PAYMENT
+    productServicePrefix = process.env.NUXT_PUBLIC_PRODUCT_SERVICE_PREFIX || DEFAULT_SERVICE_PREFIXES.PRODUCT
+    
+    console.log('[Alova Config] 服务端配置获取:', {
+      apiBase,
+      userServicePrefix,
+      orderServicePrefix,
+      paymentServicePrefix,
+      productServicePrefix
+    })
   } else {
     // 客户端使用 useRuntimeConfig
     try {
       const config = useRuntimeConfig()
       const publicConfig = config.public as any
-      apiBase = publicConfig.apiBase || '/test-api'
-      userServicePrefix = publicConfig.userServicePrefix || '/user'
-      orderServicePrefix = publicConfig.orderServicePrefix || '/order'
-      paymentServicePrefix = publicConfig.paymentServicePrefix || '/payment'
-      productServicePrefix = publicConfig.productServicePrefix || '/product'
+      apiBase = publicConfig.apiBase || DEFAULT_API_BASES.DEV
+      userServicePrefix = publicConfig.userServicePrefix || DEFAULT_SERVICE_PREFIXES.USER
+      orderServicePrefix = publicConfig.orderServicePrefix || DEFAULT_SERVICE_PREFIXES.ORDER
+      paymentServicePrefix = publicConfig.paymentServicePrefix || DEFAULT_SERVICE_PREFIXES.PAYMENT
+      productServicePrefix = publicConfig.productServicePrefix || DEFAULT_SERVICE_PREFIXES.PRODUCT
+      
+      console.log('[Alova Config] 客户端配置获取:', {
+        apiBase,
+        userServicePrefix,
+        orderServicePrefix,
+        paymentServicePrefix,
+        productServicePrefix,
+        publicConfig
+      })
     } catch (error) {
-      console.warn('无法获取运行时配置，使用默认值:', error)
-      apiBase = '/test-api'
-      userServicePrefix = '/user'
-      orderServicePrefix = '/order'
-      paymentServicePrefix = '/payment'
-      productServicePrefix = '/product'
+      console.warn('[Alova Config] 无法获取运行时配置，使用默认值:', error)
+      apiBase = DEFAULT_API_BASES.DEV
+      userServicePrefix = DEFAULT_SERVICE_PREFIXES.USER
+      orderServicePrefix = DEFAULT_SERVICE_PREFIXES.ORDER
+      paymentServicePrefix = DEFAULT_SERVICE_PREFIXES.PAYMENT
+      productServicePrefix = DEFAULT_SERVICE_PREFIXES.PRODUCT
     }
   }
   
   // 拼接 apiBase 与各个服务前缀
-  return {
+  const servicePrefixes = {
     user: `${apiBase}${userServicePrefix}`,
     order: `${apiBase}${orderServicePrefix}`,
     payment: `${apiBase}${paymentServicePrefix}`,
     product: `${apiBase}${productServicePrefix}`
   }
+  
+  console.log('[Alova Config] 最终服务前缀映射:', servicePrefixes)
+  
+  return servicePrefixes
 }
 
 /**
@@ -76,15 +118,24 @@ export function getServicePrefixes(): ServicePrefixes {
 export function useServicePrefixes(): ServicePrefixes {
   const config = useRuntimeConfig()
   const publicConfig = config.public as any
-  const apiBase = publicConfig.apiBase || '/test-api'
+  const apiBase = publicConfig.apiBase || DEFAULT_API_BASES.DEV
+  
+  console.log('[Alova Config] useServicePrefixes 配置获取:', {
+    apiBase,
+    publicConfig
+  })
   
   // 拼接 apiBase 与各个服务前缀
-  return {
-    user: `${apiBase}${publicConfig.userServicePrefix || '/user'}`,
-    order: `${apiBase}${publicConfig.orderServicePrefix || '/order'}`,
-    payment: `${apiBase}${publicConfig.paymentServicePrefix || '/payment'}`,
-    product: `${apiBase}${publicConfig.productServicePrefix || '/product'}`
+  const servicePrefixes = {
+    user: `${apiBase}${publicConfig.userServicePrefix || DEFAULT_SERVICE_PREFIXES.USER}`,
+    order: `${apiBase}${publicConfig.orderServicePrefix || DEFAULT_SERVICE_PREFIXES.ORDER}`,
+    payment: `${apiBase}${publicConfig.paymentServicePrefix || DEFAULT_SERVICE_PREFIXES.PAYMENT}`,
+    product: `${apiBase}${publicConfig.productServicePrefix || DEFAULT_SERVICE_PREFIXES.PRODUCT}`
   }
+  
+  console.log('[Alova Config] useServicePrefixes 最终结果:', servicePrefixes)
+  
+  return servicePrefixes
 }
 
 /**
@@ -109,39 +160,51 @@ export function useServiceUrl(service: string, endpoint: string): string {
  * @returns {EnvironmentConfig} 环境配置对象
  */
 export function getEnvironmentConfig(): EnvironmentConfig {
-  if (process.server || import.meta.server) {
+  if (import.meta.server) {
     // 服务端环境
-    return {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || '/test-api',
-      userServicePrefix: process.env.NUXT_PUBLIC_USER_SERVICE_PREFIX || '/user',
-      orderServicePrefix: process.env.NUXT_PUBLIC_ORDER_SERVICE_PREFIX || '/order',
-      paymentServicePrefix: process.env.NUXT_PUBLIC_PAYMENT_SERVICE_PREFIX || '/payment',
-      productServicePrefix: process.env.NUXT_PUBLIC_PRODUCT_SERVICE_PREFIX || '/product',
-      testApiBase: process.env.NUXT_PUBLIC_TEST_API_BASE || '/test-api'
+    const config = {
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || DEFAULT_API_BASES.DEV,
+      userServicePrefix: process.env.NUXT_PUBLIC_USER_SERVICE_PREFIX || DEFAULT_SERVICE_PREFIXES.USER,
+      orderServicePrefix: process.env.NUXT_PUBLIC_ORDER_SERVICE_PREFIX || DEFAULT_SERVICE_PREFIXES.ORDER,
+      paymentServicePrefix: process.env.NUXT_PUBLIC_PAYMENT_SERVICE_PREFIX || DEFAULT_SERVICE_PREFIXES.PAYMENT,
+      productServicePrefix: process.env.NUXT_PUBLIC_PRODUCT_SERVICE_PREFIX || DEFAULT_SERVICE_PREFIXES.PRODUCT,
+      testApiBase: process.env.NUXT_PUBLIC_TEST_API_BASE || DEFAULT_API_BASES.TEST
     }
+    
+    console.log('[Alova Config] 服务端环境配置:', config)
+    
+    return config
   } else {
     // 客户端环境
     try {
       const config = useRuntimeConfig()
       const publicConfig = config.public as any
-      return {
-        apiBase: publicConfig.apiBase || '/test-api',
-        userServicePrefix: publicConfig.userServicePrefix || '/user',
-        orderServicePrefix: publicConfig.orderServicePrefix || '/order',
-        paymentServicePrefix: publicConfig.paymentServicePrefix || '/payment',
-        productServicePrefix: publicConfig.productServicePrefix || '/product',
-        testApiBase: publicConfig.testApiBase || 'https://jsonplaceholder.typicode.com'
+      const envConfig = {
+        apiBase: publicConfig.apiBase || DEFAULT_API_BASES.DEV,
+        userServicePrefix: publicConfig.userServicePrefix || DEFAULT_SERVICE_PREFIXES.USER,
+        orderServicePrefix: publicConfig.orderServicePrefix || DEFAULT_SERVICE_PREFIXES.ORDER,
+        paymentServicePrefix: publicConfig.paymentServicePrefix || DEFAULT_SERVICE_PREFIXES.PAYMENT,
+        productServicePrefix: publicConfig.productServicePrefix || DEFAULT_SERVICE_PREFIXES.PRODUCT,
+        testApiBase: publicConfig.testApiBase || DEFAULT_API_BASES.TEST,
       }
+      
+      console.log('[Alova Config] 客户端环境配置:', envConfig)
+      
+      return envConfig
     } catch (error) {
-      console.warn('无法获取运行时配置，使用默认值:', error)
-      return {
-        apiBase: '/test-api',
-        userServicePrefix: '/user',
-        orderServicePrefix: '/order',
-        paymentServicePrefix: '/payment',
-        productServicePrefix: '/product',
-        testApiBase: 'https://jsonplaceholder.typicode.com'
+      console.warn('[Alova Config] 无法获取运行时配置，使用默认值:', error)
+      const fallbackConfig = {
+        apiBase: DEFAULT_API_BASES.DEV,
+        userServicePrefix: DEFAULT_SERVICE_PREFIXES.USER,
+        orderServicePrefix: DEFAULT_SERVICE_PREFIXES.ORDER,
+        paymentServicePrefix: DEFAULT_SERVICE_PREFIXES.PAYMENT,
+        productServicePrefix: DEFAULT_SERVICE_PREFIXES.PRODUCT,
+        testApiBase: DEFAULT_API_BASES.TEST,
       }
+      
+      console.log('[Alova Config] 使用回退配置:', fallbackConfig)
+      
+      return fallbackConfig
     }
   }
 }
@@ -210,30 +273,10 @@ export function getMainInstanceBaseURL(): string {
  */
 export function getTestInstanceBaseURL(customUrl?: string): string {
   if (customUrl) {
+    console.log('[Alova Config] 使用自定义测试URL:', customUrl)
     return customUrl
   }
   const config = getEnvironmentConfig()
+  console.log('[Alova Config] 获取测试实例BaseURL:', config.testApiBase)
   return config.testApiBase
 }
-
-/**
- * 预定义的服务前缀常量
- * 
- * 这些常量可以在编译时确定，提供更好的类型安全性
- */
-export const DEFAULT_SERVICE_PREFIXES = {
-  USER: '/user',
-  ORDER: '/order',
-  PAYMENT: '/payment',
-  PRODUCT: '/product'
-} as const
-
-/**
- * 预定义的 API 基础路径常量
- */
-export const DEFAULT_API_BASES = {
-  DEV: '/test-api',
-  PROD: '/api',
-  // TEST: 'https://jsonplaceholder.typicode.com'
-  TEST: '/test-api'
-} as const

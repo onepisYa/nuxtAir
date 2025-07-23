@@ -37,16 +37,16 @@ async function executeWithRetry(
   retryCount: number = TEST_CONFIG.RETRY_COUNT
 ): Promise<TestResult> {
   const startTime = Date.now()
-  
+
   for (let attempt = 1; attempt <= retryCount; attempt++) {
     try {
       const result = await Promise.race([
         testFn(),
-        new Promise((_, reject) => 
+        new Promise((_, reject) =>
           setTimeout(() => reject(new Error('测试超时')), TEST_CONFIG.TIMEOUT)
         )
       ])
-      
+
       return {
         name: testName,
         success: true,
@@ -64,12 +64,12 @@ async function executeWithRetry(
           attempt
         }
       }
-      
+
       // 等待一段时间后重试
       await new Promise(resolve => setTimeout(resolve, 1000 * attempt))
     }
   }
-  
+
   // 这里不应该到达，但为了类型安全
   return {
     name: testName,
@@ -91,12 +91,17 @@ export async function testGetPosts(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const testInstance = createTestInstance()
     const method = testInstance.Get('/posts?_limit=3')
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     if (!Array.isArray(data) || data.length === 0) {
       throw new Error('返回数据格式不正确或为空')
     }
-    
+
     return data
   }, 'GET /posts 测试')
 }
@@ -108,12 +113,17 @@ export async function testGetPost(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const testInstance = createTestInstance()
     const method = testInstance.Get('/posts/1')
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     if (!data || typeof data.id !== 'number') {
       throw new Error('返回数据格式不正确')
     }
-    
+
     return data
   }, 'GET /posts/1 测试')
 }
@@ -129,14 +139,19 @@ export async function testCreatePost(): Promise<TestResult> {
       body: 'This is a test post created by Alova',
       userId: 1
     }
-    
+
     const method = testInstance.Post('/posts', newPost)
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     if (!data || typeof data.id !== 'number') {
       throw new Error('创建文章失败')
     }
-    
+
     return data
   }, 'POST /posts 测试')
 }
@@ -153,14 +168,19 @@ export async function testUpdatePost(): Promise<TestResult> {
       body: 'This post has been updated',
       userId: 1
     }
-    
+
     const method = testInstance.Put('/posts/1', updateData)
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     if (!data || data.title !== updateData.title) {
       throw new Error('更新文章失败')
     }
-    
+
     return data
   }, 'PUT /posts/1 测试')
 }
@@ -173,7 +193,7 @@ export async function testDeletePost(): Promise<TestResult> {
     const testInstance = createTestInstance()
     const method = testInstance.Delete('/posts/1')
     const response = await method.send()
-    
+
     // JSONPlaceholder 删除操作返回空对象
     return response
   }, 'DELETE /posts/1 测试')
@@ -186,12 +206,17 @@ export async function testGetUsers(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const testInstance = createTestInstance()
     const method = testInstance.Get('/users?_limit=3')
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     if (!Array.isArray(data) || data.length === 0) {
       throw new Error('返回用户数据格式不正确或为空')
     }
-    
+
     return data
   }, 'GET /users 测试')
 }
@@ -209,18 +234,23 @@ export async function testGetUsers(): Promise<TestResult> {
  */
 
 /**
- * 测试 Main 实例（使用 /test-api 前缀）
+ * 测试 Main 实例（使用前缀）
  */
 export async function testMainInstance(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const mainInstance = createMainInstance()
-    const method = mainInstance.Get('/test-api/posts/1')
-    const { data } = await method.send()
-    
+    const method = mainInstance.Get('/posts/1')
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     if (!data || typeof data.id !== 'number') {
       throw new Error('Main 实例测试失败：返回数据格式不正确')
     }
-    
+
     return {
       instanceType: 'main',
       url: '/test-api/posts/1',
@@ -230,21 +260,26 @@ export async function testMainInstance(): Promise<TestResult> {
 }
 
 /**
- * 测试 Test 实例（使用 /test-api 前缀）
+ * 测试 Test 实例
  */
 export async function testTestInstance(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const testInstance = createTestInstance()
-    const method = testInstance.Get('/test-api/posts/1')
-    const { data } = await method.send()
-    
+    const method = testInstance.Get('/posts/1')
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send();
+    debugger
     if (!data || typeof data.id !== 'number') {
       throw new Error('Test 实例测试失败：返回数据格式不正确')
     }
-    
+
     return {
       instanceType: 'test',
-      url: '/test-api/posts/1',
+      url: method.url,
       data
     }
   }, 'Test 实例测试')
@@ -257,12 +292,17 @@ export async function testRawInstanceDirect(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const rawInstance = createRawInstance()
     const method = rawInstance.Get('https://jsonplaceholder.typicode.com/posts/1')
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     if (!data || typeof data.id !== 'number') {
       throw new Error('Raw 实例直接请求测试失败：返回数据格式不正确')
     }
-    
+
     return {
       instanceType: 'raw',
       requestType: 'direct',
@@ -279,12 +319,17 @@ export async function testRawInstanceProxy(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const rawInstance = createRawInstance()
     const method = rawInstance.Get('/test-api/posts/1')
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     if (!data || typeof data.id !== 'number') {
       throw new Error('Raw 实例代理请求测试失败：返回数据格式不正确')
     }
-    
+
     return {
       instanceType: 'raw',
       requestType: 'proxy',
@@ -301,13 +346,18 @@ export async function testJsonPlaceholderFormat(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const rawInstance = createRawInstance()
     const method = rawInstance.Get('https://jsonplaceholder.typicode.com/users?_limit=3')
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     // JSONPlaceholder 直接返回数组，没有标准的 { code: 200, data: [] } 格式
     if (!Array.isArray(data) || data.length === 0) {
       throw new Error('JSONPlaceholder 格式处理失败：返回数据不是有效数组')
     }
-    
+
     return {
       format: 'jsonplaceholder',
       dataType: 'array',
@@ -322,7 +372,7 @@ export async function testJsonPlaceholderFormat(): Promise<TestResult> {
  */
 export async function runInstanceTests(): Promise<NetworkTestResults> {
   console.log('🚀 开始运行实例测试...')
-  
+
   const tests = [
     testMainInstance,
     testTestInstance,
@@ -330,24 +380,24 @@ export async function runInstanceTests(): Promise<NetworkTestResults> {
     testRawInstanceProxy,
     testJsonPlaceholderFormat
   ]
-  
+
   const results: TestResult[] = []
-  
+
   for (const test of tests) {
     console.log(`⏳ 运行测试: ${test.name}`)
     const result = await test()
     results.push(result)
-    
+
     if (result.success) {
       console.log(`✅ ${result.name} - 成功 (${result.duration}ms)`)
     } else {
       console.log(`❌ ${result.name} - 失败: ${result.error} (${result.duration}ms)`)
     }
   }
-  
+
   const successCount = results.filter(r => r.success).length
   const totalTime = results.reduce((sum, r) => sum + r.duration, 0)
-  
+
   return {
     results,
     summary: {
@@ -370,12 +420,17 @@ export async function runInstanceTests(): Promise<NetworkTestResults> {
 export async function testConvenienceGet(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const method = get(`${TEST_CONFIG.JSONPLACEHOLDER_BASE}/posts?_limit=2`)
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     if (!Array.isArray(data) || data.length === 0) {
       throw new Error('便捷 GET 方法测试失败')
     }
-    
+
     return data
   }, '便捷方法 GET 测试')
 }
@@ -390,17 +445,22 @@ export async function testConveniencePost(): Promise<TestResult> {
       body: 'Testing convenience post method',
       userId: 1
     }
-    
+
     const method = post(
       `${TEST_CONFIG.JSONPLACEHOLDER_BASE}/posts`,
       newPost
     )
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+    const data = await method.send()
+
     if (!data || typeof data.id !== 'number') {
       throw new Error('便捷 POST 方法测试失败')
     }
-    
+
     return data
   }, '便捷方法 POST 测试')
 }
@@ -416,17 +476,23 @@ export async function testConveniencePut(): Promise<TestResult> {
       body: 'Testing convenience put method',
       userId: 1
     }
-    
+
     const method = put<TestPost, typeof updateData>(
       `${TEST_CONFIG.JSONPLACEHOLDER_BASE}/posts/1`,
       updateData
     )
-    const { data } = await method.send()
-    
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+
+    const data = await method.send()
+
     if (!data || data.title !== updateData.title) {
       throw new Error('便捷 PUT 方法测试失败')
     }
-    
+
     return data
   }, '便捷方法 PUT 测试')
 }
@@ -437,8 +503,15 @@ export async function testConveniencePut(): Promise<TestResult> {
 export async function testConvenienceDelete(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const method = del(`${TEST_CONFIG.JSONPLACEHOLDER_BASE}/posts/1`)
+
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+
     const response = await method.send()
-    
+
     return response
   }, '便捷方法 DELETE 测试')
 }
@@ -450,19 +523,30 @@ export async function testInstanceTypes(): Promise<TestResult> {
   return executeWithRetry(async () => {
     // 测试指定测试实例
     const testMethod = get<TestPost[]>('/posts?_limit=1', { instanceType: 'test' })
+    if (testMethod?.meta) {
+      testMethod.meta.isTestApi = true
+    } else {
+      testMethod.meta = { ...testMethod.meta, isTestApi: true }
+    }
+
     const testResult = await testMethod.send()
-    
+
     // 测试指定 RAW 实例
     const rawMethod = get<TestPost[]>(`${TEST_CONFIG.JSONPLACEHOLDER_BASE}/posts?_limit=1`, { instanceType: 'raw' })
+    if (rawMethod?.meta) {
+      rawMethod.meta.isTestApi = true
+    } else {
+      rawMethod.meta = { ...rawMethod.meta, isTestApi: true }
+    }
     const rawResult = await rawMethod.send()
-    
-    if (!testResult.data || !rawResult.data) {
+
+    if (!testResult || !rawResult ) {
       throw new Error('实例类型指定测试失败')
     }
-    
+
     return {
-      testInstance: testResult.data,
-      rawInstance: rawResult.data
+      testInstance: testResult,
+      rawInstance: rawResult
     }
   }, '实例类型指定测试')
 }
@@ -474,19 +558,29 @@ export async function testSpecificInstanceMethods(): Promise<TestResult> {
   return executeWithRetry(async () => {
     // 测试测试实例方法
     const testMethod = testMethods.get('/posts?_limit=1')
+    if (testMethod?.meta) {
+      testMethod.meta.isTestApi = true
+    } else {
+      testMethod.meta = { ...testMethod.meta, isTestApi: true }
+    }
     const testResult = await testMethod.send()
-    
+
     // 测试 RAW 实例方法
     const rawMethod = rawMethods.get(`${TEST_CONFIG.JSONPLACEHOLDER_BASE}/posts?_limit=1`)
+    if (rawMethod?.meta) {
+      rawMethod.meta.isTestApi = true
+    } else {
+      rawMethod.meta = { ...rawMethod.meta, isTestApi: true }
+    }
     const rawResult = await rawMethod.send()
-    
-    if (!testResult.data || !rawResult.data) {
+    debugger
+    if (!testResult || !rawResult ) {
       throw new Error('特定实例方法测试失败')
     }
-    
+
     return {
-      testMethods: testResult.data,
-      rawMethods: rawResult.data
+      testMethods: testResult,
+      rawMethods: rawResult
     }
   }, '特定实例方法测试')
 }
@@ -497,17 +591,17 @@ export async function testSpecificInstanceMethods(): Promise<TestResult> {
 export async function testCaching(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const startTime = Date.now()
-    
+
     // 第一次请求
     const method1 = get(`${TEST_CONFIG.JSONPLACEHOLDER_BASE}/posts/1`)
     const result1 = await method1.send()
     const firstRequestTime = Date.now() - startTime
-    
+
     // 第二次相同请求（应该使用缓存）
     const method2 = get(`${TEST_CONFIG.JSONPLACEHOLDER_BASE}/posts/1`)
     const result2 = await method2.send()
     const secondRequestTime = Date.now() - startTime - firstRequestTime
-    
+
     return {
       firstRequest: result1.data,
       secondRequest: result2.data,
@@ -523,7 +617,7 @@ export async function testCaching(): Promise<TestResult> {
  */
 export async function runBasicApiTests(): Promise<NetworkTestResults> {
   console.log('🚀 开始运行基础 API 测试...')
-  
+
   const tests = [
     testGetPosts,
     testGetPost,
@@ -532,24 +626,24 @@ export async function runBasicApiTests(): Promise<NetworkTestResults> {
     testDeletePost,
     testGetUsers
   ]
-  
+
   const results: TestResult[] = []
-  
+
   for (const test of tests) {
     console.log(`⏳ 运行测试: ${test.name}`)
     const result = await test()
     results.push(result)
-    
+
     if (result.success) {
       console.log(`✅ ${result.name} - 成功 (${result.duration}ms)`)
     } else {
       console.log(`❌ ${result.name} - 失败: ${result.error} (${result.duration}ms)`)
     }
   }
-  
+
   const successCount = results.filter(r => r.success).length
   const totalTime = results.reduce((sum, r) => sum + r.duration, 0)
-  
+
   return {
     results,
     summary: {
@@ -567,7 +661,7 @@ export async function runBasicApiTests(): Promise<NetworkTestResults> {
  */
 export async function runConvenienceMethodsTests(): Promise<NetworkTestResults> {
   console.log('🚀 开始运行便捷方法测试...')
-  
+
   const tests = [
     testConvenienceGet,
     testConveniencePost,
@@ -576,24 +670,24 @@ export async function runConvenienceMethodsTests(): Promise<NetworkTestResults> 
     testInstanceTypes,
     testSpecificInstanceMethods
   ]
-  
+
   const results: TestResult[] = []
-  
+
   for (const test of tests) {
     console.log(`⏳ 运行测试: ${test.name}`)
     const result = await test()
     results.push(result)
-    
+
     if (result.success) {
       console.log(`✅ ${result.name} - 成功 (${result.duration}ms)`)
     } else {
       console.log(`❌ ${result.name} - 失败: ${result.error} (${result.duration}ms)`)
     }
   }
-  
+
   const successCount = results.filter(r => r.success).length
   const totalTime = results.reduce((sum, r) => sum + r.duration, 0)
-  
+
   return {
     results,
     summary: {
@@ -621,10 +715,10 @@ export async function runAllTests(): Promise<{
   }
 }> {
   console.log('🎯 开始运行完整的 Alova 测试套件...')
-  
+
   const basicApiResults = await runBasicApiTests()
   const convenienceMethodsResults = await runConvenienceMethodsTests()
-  
+
   const overall = {
     total: basicApiResults.summary.total + convenienceMethodsResults.summary.total,
     success: basicApiResults.summary.success + convenienceMethodsResults.summary.success,
@@ -632,16 +726,16 @@ export async function runAllTests(): Promise<{
     totalTime: basicApiResults.summary.totalTime + convenienceMethodsResults.summary.totalTime,
     successRate: 0
   }
-  
+
   overall.successRate = (overall.success / overall.total) * 100
-  
+
   console.log('\n📊 测试总结:')
   console.log(`总测试数: ${overall.total}`)
   console.log(`成功: ${overall.success}`)
   console.log(`失败: ${overall.failed}`)
   console.log(`成功率: ${overall.successRate.toFixed(2)}%`)
   console.log(`总耗时: ${overall.totalTime}ms`)
-  
+
   return {
     basicApi: basicApiResults,
     convenienceMethods: convenienceMethodsResults,
@@ -655,12 +749,19 @@ export async function runAllTests(): Promise<{
 export async function quickHealthCheck(): Promise<TestResult> {
   return executeWithRetry(async () => {
     const method = get(`${TEST_CONFIG.JSONPLACEHOLDER_BASE}/posts/1`)
-    const { data } = await method.send()
-    
+
+    if (method?.meta) {
+      method.meta.isTestApi = true
+    } else {
+      method.meta = { ...method.meta, isTestApi: true }
+    }
+
+    const data = await method.send()
+
     if (!data || typeof data.id !== 'number') {
       throw new Error('健康检查失败')
     }
-    
+
     return data
   }, '快速健康检查')
 }
