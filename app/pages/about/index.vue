@@ -2,11 +2,13 @@
 const { t, locale } = useI18n()
 const route = useRoute()
 
-// 为不同语言定义自定义路径
+// 可以为不同语言定义自定义路径
 defineI18nRoute({
   paths: {
-    'en-US': '/about-us',
-    'zh-CN': '/guan-yu-wo-men'
+    // 'en-US': '/about-us',
+    // 'zh-CN': '/guan-yu-wo-men'
+    'en-US': '/about',
+    'zh-CN': '/about'
   }
 })
 
