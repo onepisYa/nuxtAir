@@ -9,6 +9,9 @@
  * - 类型定义
  */
 
+// import { createClientTokenAuthentication } from 'alova/client'
+// import { useCookie } from '#app'
+
 // === 类型定义导出 ===
 export type {
   AlovaInstanceType,
