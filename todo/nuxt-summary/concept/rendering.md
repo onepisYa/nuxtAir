@@ -1,6 +1,6 @@
 - [rendering](https://nuxt.com/docs/4.x/guide/concepts/rendering)
 
-[中间件（Middlewares）](https://nuxt.com/docs/4.x/guide/directory-structure/middleware) 和 [页面（Pages）](https://nuxt.com/docs/4.x/guide/directory-structure/pages) 在服务器端和客户端激活期间（[hydration](file:///Users/onepisya/Documents/GitHub/nuxtAir/node_modules/.pnpm/@nuxt+schema@3.17.7/node_modules/@nuxt/schema/dist/index.d.ts#L313-L313)）运行。
+[中间件（Middlewares）](https://nuxt.com/docs/4.x/guide/directory-structure/middleware) 和 [页面（Pages）](https://nuxt.com/docs/4.x/guide/directory-structure/pages) 在服务器端和客户端激活期间（hydration）运行。
 
 [插件（Plugins）](https://nuxt.com/docs/4.x/guide/directory-structure/plugins) 可以在服务器端、客户端或 **两者** 上运行。
 
