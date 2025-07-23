@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "nuxi dev --host",
+    "dev": "nuxi dev --dotenv .env --host",
     "generate": "nuxi generate --dotenv .env.production && node zip.js",
     "build": "nuxi build",
     "build:prod": "nuxi build --dotenv .env.production",

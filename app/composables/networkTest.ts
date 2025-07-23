@@ -4,6 +4,7 @@
 import { createAlova } from 'alova'
 import adapterFetch from 'alova/fetch'
 import NuxtHook from 'alova/nuxt'
+import { get, post, put, del, logAndFormatError } from '~/composables/useAlova'
 
 // 创建测试用的 Alova 实例
 const testAlova = createAlova({
@@ -50,8 +51,7 @@ export async function testGetRequest(): Promise<{ success: boolean; data?: TestP
     console.log('GET 请求测试成功:', posts)
     return { success: true, data: posts }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '未知错误'
-    console.error('GET 请求测试失败:', errorMessage)
+    const errorMessage = logAndFormatError(error, 'GET 请求测试')
     return { success: false, error: errorMessage }
   }
 }
@@ -71,8 +71,7 @@ export async function testPostRequest(): Promise<{ success: boolean; data?: Test
     console.log('POST 请求测试成功:', result)
     return { success: true, data: result }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '未知错误'
-    console.error('POST 请求测试失败:', errorMessage)
+    const errorMessage = logAndFormatError(error, 'POST 请求测试')
     return { success: false, error: errorMessage }
   }
 }
@@ -93,8 +92,7 @@ export async function testPutRequest(): Promise<{ success: boolean; data?: TestP
     console.log('PUT 请求测试成功:', result)
     return { success: true, data: result }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '未知错误'
-    console.error('PUT 请求测试失败:', errorMessage)
+    const errorMessage = logAndFormatError(error, 'PUT 请求测试')
     return { success: false, error: errorMessage }
   }
 }
@@ -108,8 +106,7 @@ export async function testDeleteRequest(): Promise<{ success: boolean; error?: s
     console.log('DELETE 请求测试成功')
     return { success: true }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : '未知错误'
-    console.error('DELETE 请求测试失败:', errorMessage)
+    const errorMessage = logAndFormatError(error, 'DELETE 请求测试')
     return { success: false, error: errorMessage }
   }
 }
@@ -136,6 +133,110 @@ export async function runAllNetworkTests() {
     console.log('✅ 所有网络测试通过！')
   } else {
     console.warn('⚠️ 部分网络测试失败，请检查网络连接和配置')
+  }
+  
+  return results
+}
+
+/**
+ * 测试 useAlova 便捷方法 - GET
+ */
+export async function testAlovaGetMethod(): Promise<{ success: boolean; data?: TestPost[]; error?: string }> {
+  try {
+    const posts = await get<TestPost[]>('/test-api/posts?_limit=3', {}, { 
+       meta: { ignoreToken: true, isTestApi: true }
+     })
+     console.log('useAlova GET 方法测试成功:', posts)
+     return { success: true, data: posts as TestPost[] }
+  } catch (error) {
+    const errorMessage = logAndFormatError(error, 'useAlova GET 方法测试')
+    return { success: false, error: errorMessage }
+  }
+}
+
+/**
+ * 测试 useAlova 便捷方法 - POST
+ */
+export async function testAlovaPostMethod(): Promise<{ success: boolean; data?: TestPost; error?: string }> {
+  try {
+    const newPost = {
+      title: 'useAlova POST 测试文章',
+      body: '使用 useAlova 便捷方法进行 POST 请求测试',
+      userId: 1,
+    }
+    
+    const result = await post<TestPost>('/test-api/posts', newPost, { 
+       meta: { ignoreToken: true, isTestApi: true }
+     })
+     console.log('useAlova POST 方法测试成功:', result)
+     return { success: true, data: result as TestPost }
+  } catch (error) {
+    const errorMessage = logAndFormatError(error, 'useAlova POST 方法测试')
+    return { success: false, error: errorMessage }
+  }
+}
+
+/**
+ * 测试 useAlova 便捷方法 - PUT
+ */
+export async function testAlovaPutMethod(): Promise<{ success: boolean; data?: TestPost; error?: string }> {
+  try {
+    const updatePost = {
+      id: 1,
+      title: 'useAlova PUT 更新测试',
+      body: '使用 useAlova 便捷方法进行 PUT 请求测试',
+      userId: 1,
+    }
+    
+    const result = await put<TestPost>('/test-api/posts/1', updatePost, { 
+       meta: { ignoreToken: true, isTestApi: true }
+     })
+     console.log('useAlova PUT 方法测试成功:', result)
+     return { success: true, data: result as TestPost }
+  } catch (error) {
+    const errorMessage = logAndFormatError(error, 'useAlova PUT 方法测试')
+    return { success: false, error: errorMessage }
+  }
+}
+
+/**
+ * 测试 useAlova 便捷方法 - DELETE
+ */
+export async function testAlovaDeleteMethod(): Promise<{ success: boolean; error?: string }> {
+  try {
+    await del('/test-api/posts/1', {}, { 
+      meta: { ignoreToken: true, isTestApi: true }
+    })
+    console.log('useAlova DELETE 方法测试成功')
+    return { success: true }
+  } catch (error) {
+    const errorMessage = logAndFormatError(error, 'useAlova DELETE 方法测试')
+    return { success: false, error: errorMessage }
+  }
+}
+
+/**
+ * 运行所有 useAlova 便捷方法测试
+ */
+export async function runAlovaMethodsTests() {
+  console.log('开始 useAlova 便捷方法测试...')
+  
+  const results = {
+    get: await testAlovaGetMethod(),
+    post: await testAlovaPostMethod(),
+    put: await testAlovaPutMethod(),
+    delete: await testAlovaDeleteMethod(),
+  }
+  
+  const successCount = Object.values(results).filter(r => r.success).length
+  const totalTests = Object.keys(results).length
+  
+  console.log(`useAlova 便捷方法测试完成: ${successCount}/${totalTests} 个测试通过`)
+  
+  if (successCount === totalTests) {
+    console.log('✅ 所有 useAlova 便捷方法测试通过！')
+  } else {
+    console.warn('⚠️ 部分 useAlova 便捷方法测试失败，请检查网络连接和配置')
   }
   
   return results

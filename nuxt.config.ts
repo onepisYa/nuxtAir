@@ -36,7 +36,7 @@ export default defineNuxtConfig({
     baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com', // SEO 必需：生成完整的 alternate URLs
     locales: [
       {
-        code: 'en-US', 
+        code: 'en-US',
         iso: 'en-US',
         language: 'en-US', // 用于生成 hreflang 标签
         name: 'English',
@@ -48,9 +48,9 @@ export default defineNuxtConfig({
         code: 'zh-CN',
         iso: 'zh-CN',
         language: 'zh-CN', // 用于生成 hreflang 标签
-        name: '简体中文', 
+        name: '简体中文',
         dir: 'ltr',
-        files: forceLocaleFiles([{path: 'zh-CN.json', cache: true}, 'zh-CN.js']) as any  // 强制绕过官方类型检查，使用混合类型、这里是官方的类型写的不合理
+        files: forceLocaleFiles([{ path: 'zh-CN.json', cache: true }, 'zh-CN.js']) as any  // 强制绕过官方类型检查，使用混合类型、这里是官方的类型写的不合理
       }
     ],
     defaultLocale: 'en-US', // 设置默认语言为英文
@@ -71,7 +71,8 @@ export default defineNuxtConfig({
     exclude: [
       '/admin/**',
       '/dev-api/**',
-      '/prod-api/**'
+      '/prod-api/**',
+      '/test-api/**'
     ]
   },
 
@@ -80,7 +81,7 @@ export default defineNuxtConfig({
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/dev-api', '/prod-api']
+        disallow: ['/admin', '/dev-api', '/prod-api', '/test-api']
       }
     ],
     sitemap: `${process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'}/sitemap.xml`
@@ -152,10 +153,6 @@ export default defineNuxtConfig({
       phonenumber: process.env.NUXT_PUBLIC_PHONENUMBER,
     },
   },
-  routeRules: {
-    '/dev-api/**': { proxy: `${process.env.NUXT_API_BASE_URL}/**`, cors: true },
-    '/prod-api/**': { proxy: `${process.env.NUXT_API_BASE_URL}/**`, cors: true },
-  },
   devServer: {
     port: 4000,
     host: '0.0.0.0',
@@ -175,6 +172,30 @@ export default defineNuxtConfig({
     prerender: {
       //   crawlLinks: true,
       routes: ['/sitemap.xml']
+    },
+    // 开发环境代理配置
+    devProxy: {
+      '/dev-api': {
+        target: process.env.NUXT_API_BASE_URL,
+        changeOrigin: true,
+        prependPath: true // 将 目标 URL 添加到 /dev-api  前面
+      },
+      '/prod-api': {
+        target: process.env.NUXT_API_BASE_URL,
+        changeOrigin: true,
+        prependPath: false
+      },
+      '/test-api': {
+        target: 'https://jsonplaceholder.typicode.com',
+        changeOrigin: true,
+        prependPath: false, // 不将 目标 URL 添加到 /test-api  前面
+      },
+    },
+    routeRules: {
+      // 生产环境代理配置
+      '/dev-api/**': { proxy: { to: `${process.env.NUXT_API_BASE_URL}` }, cors: true },
+      '/prod-api/**': { proxy: { to: `${process.env.NUXT_API_BASE_URL}` }, cors: true },
+      '/test-api/**': { proxy: { to: 'https://jsonplaceholder.typicode.com' }, cors: true },
     },
   },
   vite: {
