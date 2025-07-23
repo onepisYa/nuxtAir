@@ -178,7 +178,7 @@ export default defineNuxtConfig({
       '/dev-api': {
         target: process.env.NUXT_API_BASE_URL,
         changeOrigin: true,
-        prependPath: true // 将 目标 URL 添加到 /dev-api  前面
+        prependPath: false // 不将 目标 URL 添加到 /dev-api  前面
       },
       '/prod-api': {
         target: process.env.NUXT_API_BASE_URL,
