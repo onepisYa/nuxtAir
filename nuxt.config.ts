@@ -195,7 +195,7 @@ export default defineNuxtConfig({
       // 生产环境代理配置
       '/dev-api/**': { proxy: { to: `${process.env.NUXT_API_BASE_URL}` }, cors: true },
       '/prod-api/**': { proxy: { to: `${process.env.NUXT_API_BASE_URL}` }, cors: true },
-      '/test-api/**': { proxy: { to: 'https://jsonplaceholder.typicode.com' }, cors: true },
+      '/test-api/**': { proxy: { to: 'https://jsonplaceholder.typicode.com/**' } , cors: true}, // 经测试 /test-api 在构建后 会自动去掉 /test-api 发送正确的 api 请求
     },
   },
   vite: {
