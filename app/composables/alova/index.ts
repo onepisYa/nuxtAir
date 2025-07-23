@@ -73,6 +73,11 @@ import {
 } from './factory'
 
 import {
+  processResponseAndValidate,
+  logAndFormatError
+} from './utils'
+
+import {
   get,
   post,
   put,
@@ -270,12 +275,8 @@ export function useAlova() {
   }
 }
 
-// === 重新导入原有的工具函数 ===
-
-/**
- * 重新导出原有的工具函数以保持兼容性
- */
-export { processResponseAndValidate, logAndFormatError } from '~/composables/useAlova'
+// === 工具函数导出 ===
+export { processResponseAndValidate, logAndFormatError }
 
 // === 默认导出 ===
 

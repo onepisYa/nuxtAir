@@ -58,7 +58,7 @@
         <UCard>
           <template #header>
             <div class="flex justify-between items-center">
-              <h2 class="text-xl font-semibold">Test 实例测试（/test-api 前缀）</h2>
+              <h2 class="text-xl font-semibold">Test 实例测试</h2>
               <UButton 
                 @click="runTestInstanceTest" 
                 :loading="testInstanceTesting"
@@ -91,7 +91,7 @@
             </div>
             
             <div v-if="!testInstanceResults && !testInstanceTesting" class="text-center text-gray-500 dark:text-gray-400">
-              点击上方按钮测试 Test 实例功能（使用 /test-api 前缀）
+              点击上方按钮测试 Test 实例功能
             </div>
           </div>
         </UCard>
@@ -100,7 +100,7 @@
         <UCard>
           <template #header>
             <div class="flex justify-between items-center">
-              <h2 class="text-xl font-semibold">Raw 实例测试（直接 URL + /test-api 前缀）</h2>
+              <h2 class="text-xl font-semibold">Raw 实例测试（直接 URL + apiBase）</h2>
               <UButton 
                 @click="runRawInstanceTest" 
                 :loading="rawInstanceTesting"

@@ -1,4 +1,6 @@
 
+import { get, post } from '~/composables/alova'
+
 const info_template = {
   id: '',
   companyName: '',

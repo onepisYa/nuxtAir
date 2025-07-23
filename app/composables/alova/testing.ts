@@ -6,13 +6,27 @@
  * - 新架构便捷方法测试
  * - 实例管理测试（main、test、raw 三种实例）
  * - 性能和缓存测试
- * - /test-api 前缀和直接 URL 请求测试
+ * - apiBase 前缀和直接 URL 请求测试
  */
 
 import type { TestPost, TestUser, TestResult, NetworkTestResults } from './types'
 import { createTestInstance, createMainInstance, createRawInstance } from './factory'
 import { get, post, put, del, testMethods, mainMethods, rawMethods } from './methods'
 import { useServiceUrl } from './config'
+
+// 从 networkTest.ts 迁移的测试结果类型
+interface LegacyTestResult {
+  success: boolean
+  data?: any
+  error?: string
+}
+
+interface LegacyNetworkTestResults {
+  get: LegacyTestResult
+  post: LegacyTestResult
+  put: LegacyTestResult
+  delete: LegacyTestResult
+}
 
 /**
  * 测试配置常量
@@ -313,7 +327,7 @@ export async function testRawInstanceDirect(): Promise<TestResult> {
 }
 
 /**
- * 测试 Raw 实例（使用 /test-api 前缀）
+ * 测试 Raw 实例
  */
 export async function testRawInstanceProxy(): Promise<TestResult> {
   return executeWithRetry(async () => {

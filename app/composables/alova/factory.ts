@@ -14,7 +14,7 @@ import NuxtHook from 'alova/nuxt'
 import type { AlovaInstance, InstanceOptions, CacheKey } from './types'
 import { CACHE_KEYS } from './types'
 import { createBaseConfig, getMainInstanceBaseURL, getTestInstanceBaseURL } from './config'
-import { processResponseAndValidate, logAndFormatError } from '~/composables/useAlova'
+import { processResponseAndValidate, logAndFormatError } from './utils'
 
 /**
  * SSR 安全的实例缓存管理
