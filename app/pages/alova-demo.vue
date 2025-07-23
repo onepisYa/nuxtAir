@@ -455,7 +455,8 @@ import {
   testTestInstance,
   testRawInstanceDirect,
   testRawInstanceProxy,
-  testJsonPlaceholderFormat
+  testJsonPlaceholderFormat,
+  testCaching
 } from '~/composables/alova/testing'
 
 import {
@@ -660,40 +661,57 @@ async function runCacheTests() {
   cacheResults.value = null
   
   try {
-    const results: any = {}
+    // 使用真正的 Alova 缓存测试
+    const result = await testCaching()
     
-    // 测试缓存存储
-    try {
-      // 这里可以添加具体的缓存测试逻辑
-      results.cacheStorage = { 
-        success: true, 
-        message: '缓存存储功能正常' 
-      }
-    } catch (error) {
-      results.cacheStorage = { 
-        success: false, 
-        error: error instanceof Error ? error.message : '缓存存储测试失败' 
+    if (result.success && result.data?.testResults) {
+      // 将详细的测试步骤作为单独的测试结果显示
+      const testResults = result.data.testResults.map((step: any) => ({
+        name: step.step,
+        success: step.success,
+        message: step.message,
+        data: step
+      }))
+      
+      // 添加总结信息
+      testResults.push({
+        name: '缓存测试总结',
+        success: result.data.allTestsPassed,
+        message: `测试完成: ${result.data.successRate} 项通过，首次请求: ${result.data.firstRequestTime}ms，缓存请求: ${result.data.secondRequestTime}ms`,
+        data: {
+          summary: true,
+          ...result.data
+        }
+      })
+      
+      // 转换为对象格式以匹配模板
+      const results: any = {}
+      testResults.forEach((test, index) => {
+        results[`test_${index}`] = {
+          success: test.success,
+          message: test.message,
+          name: test.name
+        }
+      })
+      
+      cacheResults.value = results
+    } else {
+      // 测试失败的情况
+      cacheResults.value = {
+        cacheTest: {
+          success: false,
+          message: result.message || '缓存测试失败'
+        }
       }
     }
-    
-    // 测试缓存清除
-    try {
-      // 这里可以添加具体的缓存清除测试逻辑
-      results.cacheClear = { 
-        success: true, 
-        message: '缓存清除功能正常' 
-      }
-    } catch (error) {
-      results.cacheClear = { 
-        success: false, 
-        error: error instanceof Error ? error.message : '缓存清除测试失败' 
-      }
-    }
-    
-    cacheResults.value = results
-    
   } catch (error) {
     console.error('缓存管理测试失败:', error)
+    cacheResults.value = {
+      cacheTestError: {
+        success: false,
+        error: `测试执行失败: ${(error as Error).message}`
+      }
+    }
   } finally {
     cacheTesting.value = false
   }
