@@ -15,7 +15,8 @@
     "nuxi": "nuxi",
     "seo:validate": "node scripts/seo-validator.js",
     "seo:check": "npm run seo:validate",
-    "seo:test": "npm run build && npm run seo:validate"
+    "seo:test": "npm run build && npm run seo:validate",
+    "alova": "alova"
   },
   "dependencies": {
     "@nuxt/icon": "1.13.0",
