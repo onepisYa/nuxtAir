@@ -686,7 +686,7 @@ async function runCacheTests() {
       
       // 转换为对象格式以匹配模板
       const results: any = {}
-      testResults.forEach((test, index) => {
+      testResults.forEach((test: any, index: number) => {
         results[`test_${index}`] = {
           success: test.success,
           message: test.message,
@@ -700,7 +700,7 @@ async function runCacheTests() {
       cacheResults.value = {
         cacheTest: {
           success: false,
-          message: result.message || '缓存测试失败'
+          message: (result as any).message || '缓存测试失败'
         }
       }
     }

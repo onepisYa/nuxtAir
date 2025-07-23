@@ -53,7 +53,7 @@ export const useUserStore = defineStore('user', () => {
   // 获取用户信息
   async function getUserInfo() {
     try {
-      const res = await get('/business/company/getCurrentCompany')
+      const res = await get('/business/company/getCurrentCompany') as typeof info_template
       info.value = res
     }
     catch (e) {
@@ -64,7 +64,7 @@ export const useUserStore = defineStore('user', () => {
   // 退出登录
   async function logout() {
     try {
-      await post('/auth/logout')
+      await post('/auth/logout') as any
       clear()
       return navigateTo('/?callback=success&message=退出成功')
     }

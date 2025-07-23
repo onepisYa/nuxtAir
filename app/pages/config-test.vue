@@ -84,10 +84,10 @@ import {
 } from '~/composables/alova/config'
 
 // 响应式数据
-const servicePrefixes = ref(null)
-const environmentConfig = ref(null)
-const baseURLs = ref(null)
-const constants = ref(null)
+const servicePrefixes = ref<any>(null)
+const environmentConfig = ref<any>(null)
+const baseURLs = ref<any>(null)
+const constants = ref<any>(null)
 
 // 测试服务前缀
 function testServicePrefixes() {
