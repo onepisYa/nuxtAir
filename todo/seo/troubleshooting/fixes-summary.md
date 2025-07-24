@@ -197,7 +197,7 @@ const i18nHead = useLocaleHead({
 **问题描述**: `switchLocalePath` 函数调用错误
 
 **修复内容**:
-- ✅ 修复了 `seo-test/index.vue` 中的函数调用
+- ✅ 修复了 `test/seo-test/index.vue` 中的函数调用
 - ✅ 使用正确的 API 调用方式
 
 **修复前**:
@@ -423,11 +423,14 @@ app/
 │   ├── index.vue           # 首页 SEO
 │   ├── about/
 │   │   └── index.vue       # 关于页面 SEO
-│   ├── blog/
-│   │   ├── index.vue       # 博客列表 SEO
-│   │   └── [slug].vue      # 博客文章 SEO
-│   └── seo-test/
-│       └── index.vue       # SEO 测试页面
+│   └── test/
+│       ├── blog/
+│       │   ├── index.vue   # 博客列表 SEO
+│       │   └── [slug].vue  # 博客文章 SEO
+│       ├── seo-test/
+│       │   └── index.vue   # SEO 测试页面
+│       ├── og-test.vue     # OG 测试页面
+│       └── i18n-test.vue   # i18n 测试页面
 └── i18n/
     └── locales/
         ├── en-US.json      # 英文 SEO 翻译

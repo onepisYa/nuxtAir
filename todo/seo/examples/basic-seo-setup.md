@@ -144,7 +144,7 @@ useSchemaOrg([
 
 ## 📝 博客文章页面 SEO 配置
 
-### `pages/blog/[slug].vue`
+### `pages/test/blog/[slug].vue`
 
 ```vue
 <script setup>

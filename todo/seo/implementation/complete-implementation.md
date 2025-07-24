@@ -304,7 +304,7 @@ useSchemaOrg([
     '@type': 'BlogPosting',
     headline: () => post.value?.title,
     description: () => post.value?.excerpt,
-    image: () => `${process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'}/api/__og-image__/image/blog/${route.params.slug}/og.png`,
+    image: () => `${process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'}/api/__og-image__/image/test/blog/${route.params.slug}/og.png`,
     datePublished: () => post.value?.date,
     dateModified: () => post.value?.date,
     author: {

@@ -20,16 +20,16 @@
   - `app/app.vue`
   - `app/pages/index.vue`
   - `app/pages/about/index.vue`
-  - `app/pages/blog/index.vue`
-  - `app/pages/blog/[slug].vue`
-  - `app/pages/seo-test/index.vue`
+  - `app/pages/test/blog/index.vue`
+  - `app/pages/test/blog/[slug].vue`
+  - `app/pages/test/seo-test/index.vue`
 
 ### 4. 中间件配置错误
 - ✅ 暂时注释掉了 `i18n-redirect` 中间件配置
 - ✅ 需要正确配置中间件后再启用
 
 ### 5. switchLocalePath 使用错误
-- ✅ 修复了 `seo-test/index.vue` 中的 `switchLocalePath` 调用
+- ✅ 修复了 `test/seo-test/index.vue` 中的 `switchLocalePath` 调用
 - ✅ 改为使用 `$switchLocalePath`
 
 ### 6. i18n SEO 配置优化
@@ -106,8 +106,12 @@ app/
 │   ├── blog/
 │   │   ├── index.vue      # 博客列表 SEO
 │   │   └── [slug].vue     # 博客文章 SEO
-│   └── seo-test/
-│       └── index.vue      # SEO 测试页面
+│   └── test/
+│       ├── blog/
+│       │   ├── index.vue  # 博客列表 SEO
+│       │   └── [slug].vue # 博客文章 SEO
+│       └── seo-test/
+│           └── index.vue  # SEO 测试页面
 └── locales/
     ├── en-US.json         # 英文 SEO 翻译
     └── zh-CN.json         # 中文 SEO 翻译

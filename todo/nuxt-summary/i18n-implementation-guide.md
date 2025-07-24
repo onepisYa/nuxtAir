@@ -911,7 +911,7 @@ defineI18nRoute({
 ### 2. 动态路由本地化
 
 ```vue
-<!-- pages/blog/[slug].vue -->
+<!-- pages/test/blog/[slug].vue -->
 <script setup>
 const route = useRoute()
 const { locale } = useI18n()

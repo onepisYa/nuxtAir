@@ -177,7 +177,7 @@ useSchemaOrg([
 </script>
 ```
 
-#### 博客列表页面 (pages/blog/index.vue)
+#### 博客列表页面 (pages/test/blog/index.vue)
 
 ```vue
 <script setup>
@@ -203,7 +203,7 @@ useSchemaOrg([
         position: index + 1,
         item: {
           '@type': 'BlogPosting',
-          '@id': `${process.env.NUXT_PUBLIC_BASE_URL}/blog/${post.slug}`,
+          '@id': `${process.env.NUXT_PUBLIC_BASE_URL}/test/blog/${post.slug}`,
           headline: post.title,
           description: post.excerpt,
           datePublished: post.publishedAt,
@@ -219,7 +219,7 @@ useSchemaOrg([
 </script>
 ```
 
-#### 博客文章页面 (pages/blog/[slug].vue)
+#### 博客文章页面 (pages/test/blog/[slug].vue)
 
 ```vue
 <script setup>
@@ -272,7 +272,7 @@ useSchemaOrg([
   // 面包屑导航
   defineBreadcrumb([
     { name: t('nav.home'), item: '/' },
-    { name: t('nav.blog'), item: '/blog' },
+    { name: t('nav.blog'), item: '/test/blog' },
     { name: post.title, item: route.path }
   ])
 ])
