@@ -72,7 +72,7 @@ export default defineNuxtConfig({
       '/admin/**',
       '/dev-api/**',
       '/prod-api/**',
-      '/test-api/**'
+      '/test-api/**',
     ]
   },
 
@@ -227,6 +227,19 @@ export default defineNuxtConfig({
   },
   hooks: {
     'pages:extend': function (pages) {
+      // 根据环境变量过滤测试页面
+      const shouldExcludeTestPages = process.env.NODE_ENV === 'production' || 
+                                   process.env.EXCLUDE_TEST_PAGES === 'true'
+      
+      if (shouldExcludeTestPages) {
+        // 过滤掉 /test 路径下的所有页面
+        const filteredPages = pages.filter(page => {
+          return !page.file?.includes('/pages/test/') && !page.path?.startsWith('/test')
+        })
+        // 清空原数组并添加过滤后的页面
+        pages.splice(0, pages.length, ...filteredPages)
+      }
+      
       function setMiddleware(pages: NuxtPage[]) {
         for (const page of pages) {
           if (page.path.indexOf('/user') > 0) {
