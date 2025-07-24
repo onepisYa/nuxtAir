@@ -20,6 +20,9 @@ const testConfigs = [
 const envPath = path.join(__dirname, '../.env')
 const envBackupPath = path.join(__dirname, '../.env.backup')
 
+// 存储活跃的子进程，用于清理
+const activeProcesses = new Set()
+
 // 备份原始 .env 文件
 function backupEnv() {
   if (fs.existsSync(envPath)) {
@@ -78,8 +81,12 @@ function testPortConfig(config) {
     
     const child = spawn('npm', ['run', 'dev'], {
       stdio: 'pipe',
-      cwd: path.join(__dirname, '..')
+      cwd: path.join(__dirname, '..'),
+      detached: true  // 创建新的进程组，便于管理子进程
     })
+    
+    // 记录活跃进程
+    activeProcesses.add(child.pid)
     
     let output = ''
     let hasStarted = false
@@ -107,7 +114,23 @@ function testPortConfig(config) {
         
         // 等待 2 秒后关闭服务器
         setTimeout(() => {
-          child.kill('SIGTERM')
+          // 强制终止进程组，确保所有子进程都被清理
+          try {
+            process.kill(-child.pid, 'SIGTERM')
+          } catch (e) {
+            // 如果进程组终止失败，尝试直接终止主进程
+            child.kill('SIGTERM')
+          }
+          
+          // 如果 SIGTERM 无效，2秒后使用 SIGKILL 强制终止
+          setTimeout(() => {
+            try {
+              process.kill(-child.pid, 'SIGKILL')
+            } catch (e) {
+              child.kill('SIGKILL')
+            }
+          }, 2000)
+          
           resolve(true)
         }, 2000)
       }
@@ -118,6 +141,9 @@ function testPortConfig(config) {
     })
     
     child.on('close', (code) => {
+      // 从活跃进程列表中移除
+      activeProcesses.delete(child.pid)
+      
       if (!hasStarted) {
         console.log(`❌ 服务器启动失败，退出码: ${code}`)
         resolve(false)
@@ -128,7 +154,21 @@ function testPortConfig(config) {
     setTimeout(() => {
       if (!hasStarted) {
         console.log('⏰ 启动超时，终止测试')
-        child.kill('SIGTERM')
+        try {
+          process.kill(-child.pid, 'SIGTERM')
+        } catch (e) {
+          child.kill('SIGTERM')
+        }
+        
+        // 强制终止
+        setTimeout(() => {
+          try {
+            process.kill(-child.pid, 'SIGKILL')
+          } catch (e) {
+            child.kill('SIGKILL')
+          }
+        }, 2000)
+        
         resolve(false)
       }
     }, 30000)
@@ -168,6 +208,56 @@ async function runTests() {
     console.log('\n🔄 已恢复原始配置')
   }
 }
+
+// 清理函数 - 确保所有子进程都被终止
+function cleanup() {
+  console.log('\n🧹 清理残留进程...')
+  
+  for (const pid of activeProcesses) {
+    try {
+      // 尝试终止进程组
+      process.kill(-pid, 'SIGTERM')
+      console.log(`✅ 已终止进程组: ${pid}`)
+    } catch (e) {
+      try {
+        // 如果进程组终止失败，尝试终止单个进程
+        process.kill(pid, 'SIGTERM')
+        console.log(`✅ 已终止进程: ${pid}`)
+      } catch (e2) {
+        console.log(`⚠️  进程 ${pid} 可能已经结束`)
+      }
+    }
+  }
+  
+  // 强制清理
+  setTimeout(() => {
+    for (const pid of activeProcesses) {
+      try {
+        process.kill(-pid, 'SIGKILL')
+      } catch (e) {
+        try {
+          process.kill(pid, 'SIGKILL')
+        } catch (e2) {
+          // 进程已经结束
+        }
+      }
+    }
+    activeProcesses.clear()
+  }, 1000)
+}
+
+// 注册退出处理器
+process.on('exit', cleanup)
+process.on('SIGINT', () => {
+  console.log('\n🛑 收到中断信号，正在清理...')
+  cleanup()
+  process.exit(0)
+})
+process.on('SIGTERM', () => {
+  console.log('\n🛑 收到终止信号，正在清理...')
+  cleanup()
+  process.exit(0)
+})
 
 // 如果直接运行此脚本
 if (require.main === module) {
