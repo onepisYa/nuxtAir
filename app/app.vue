@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import faviconUrl from '~/assets/favicon.ico'
 import { useMyRuntimeConfig, usePhoneNumber, useSiteName } from '~/composables/config'
+import { useBaseUrl } from '~/composables/useBaseUrl'
 
 const route = useRoute()
 const { t, locale } = useI18n()
 const sitename = useSiteName()
+const { getCurrentUrl } = useBaseUrl()
 
 // 使用 useSeoMeta 设置动态 SEO 元数据
 useSeoMeta({
@@ -60,13 +62,21 @@ useHead(() => {
 })
 
 // 使用 useSchemaOrg 添加结构化数据
+const currentUrl = computed(() => {
+  try {
+    return getCurrentUrl()
+  } catch {
+    return ''
+  }
+})
+
 useSchemaOrg([
   defineWebPage({
     '@type': 'WebPage',
     name: () => t('seo.title'),
     description: () => t('seo.description'),
     inLanguage: locale.value,
-    url: () => `${process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'}${route.path}`
+    url: currentUrl
   })
 ])
 </script>

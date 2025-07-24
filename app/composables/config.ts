@@ -15,7 +15,8 @@ export const useMyRuntimeConfig = () => {
     phonenumber: config.public.phonenumber || '未设置',
     sitename: config.public.sitename || 'Nuxt App',
     apiBase: config.public.apiBase || '/api',
-    apiBaseUrl: config.public.apiBaseUrl || 'http://localhost',
+    apiBaseUrl: config.public.apiBaseUrl || config.public.baseUrl || 'http://localhost',
+    baseUrl: config.public.baseUrl || 'http://localhost',
   }
 }
 

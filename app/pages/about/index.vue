@@ -1,6 +1,9 @@
 <script setup lang='ts'>
+import { useBaseUrl } from '~/composables/useBaseUrl'
+
 const { t, locale } = useI18n()
 const route = useRoute()
+const { getBaseUrl, getCurrentUrl } = useBaseUrl()
 
 // 可以为不同语言定义自定义路径
 defineI18nRoute({
@@ -43,12 +46,12 @@ useSchemaOrg([
     name: () => t('pages.about.title'),
     description: () => t('pages.about.description'),
     inLanguage: locale.value,
-    url: () => `${process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'}${route.path}`,
+    url: () => getCurrentUrl(),
     mainEntity: {
       '@type': 'Organization',
       name: 'NuxtAir',
       description: () => t('pages.about.description'),
-      url: process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'
+      url: getBaseUrl()
     }
   })
 ])

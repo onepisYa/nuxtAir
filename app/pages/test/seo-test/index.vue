@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useBaseUrl } from '~/composables/useBaseUrl'
+
 const { t, locale } = useI18n()
 const route = useRoute()
+const { getBaseUrl, getCurrentUrl } = useBaseUrl()
 
 // 应用路由中间件
 definePageMeta({
@@ -42,7 +45,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: () => `https://example.com${route.path}`
+      href: () => getCurrentUrl()
     }
   ]
 })
@@ -56,7 +59,7 @@ if (isClient) {
         name: () => `SEO Test Page - ${locale.value}`,
         description: () => `Comprehensive SEO testing page with i18n support`,
         inLanguage: locale.value,
-        url: () => `https://example.com${route.path}`,
+        url: () => getCurrentUrl(),
         mainEntity: {
           '@type': 'Article',
           headline: () => `SEO Testing Guide - ${locale.value}`,
@@ -70,8 +73,8 @@ if (isClient) {
       }),
       defineOrganization({
         name: 'NuxtAir',
-        url: 'https://example.com',
-        logo: 'https://example.com/logo.png',
+        url: getBaseUrl(),
+    logo: `${getBaseUrl()}/logo.png`,
         sameAs: [
           'https://twitter.com/nuxtair',
           'https://github.com/nuxtair'

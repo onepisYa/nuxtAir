@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useBaseUrl } from '~/composables/useBaseUrl'
+
 const route = useRoute()
 const { t, locale } = useI18n()
+const { getBaseUrl, getCurrentUrl } = useBaseUrl()
 
 // 模拟根据 slug 和语言获取文章数据
 const getPostData = (slug: string, locale: string) => {
@@ -91,7 +94,7 @@ useSchemaOrg([
   defineArticle({
     headline: () => post.value?.title,
     description: () => post.value?.excerpt,
-    image: () => `${process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'}/api/__og-image__/image/blog/${route.params.slug}/og.png`,
+    image: () => `${getBaseUrl()}/api/__og-image__/image/blog/${route.params.slug}/og.png`,
     datePublished: () => post.value?.date,
     dateModified: () => post.value?.date,
     author: {
@@ -101,11 +104,11 @@ useSchemaOrg([
     publisher: {
       '@type': 'Organization',
       name: 'NuxtAir',
-      url: process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'
+      url: getBaseUrl()
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': () => `${process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'}${route.path}`
+      '@id': () => getCurrentUrl()
     },
     articleSection: ['Technology'],
     keywords: () => post.value?.tags?.join(', '),

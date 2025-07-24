@@ -44,21 +44,72 @@
 - Tailwind CSS 样式
 - 响应式设计
 
+### URL 管理系统
+- 统一的 URL 生成和管理
+- 动态环境配置支持
+- SSR 兼容的 URL 处理
+- 智能端口处理（自动忽略标准端口）
+- 性能优化的配置缓存
+
 ## 开发
 
 ```bash
 # 安装依赖
 pnpm install
 
-# 启动开发服务器
+# 启动开发服务器（默认端口）
 pnpm dev
+
+# 使用指定端口启动开发服务器
+pnpm run dev:3000  # 端口 3000
+pnpm run dev:3001  # 端口 3001
+pnpm run dev:4000  # 端口 4000
+pnpm run dev:8080  # 端口 8080
 
 # 构建生产版本
 pnpm build
 
 # 预览生产版本
 pnpm preview
+
+# 测试端口配置
+pnpm run port:test
+
+# 测试 baseUrl 生成逻辑
+pnpm run test:baseurl
 ```
+
+### 端口配置
+
+项目支持灵活的端口配置和智能 URL 处理：
+
+#### 开发环境
+- 通过 `.env` 文件中的 `NUXT_DEV_PORT` 配置默认端口
+- 如果配置的端口被占用，Nuxt 会自动使用下一个可用端口
+- 支持通过环境变量临时覆盖端口设置
+
+#### 生产环境
+- 通过 `PORT` 环境变量控制服务器端口
+- 部署平台（Vercel、Netlify 等）会自动设置此变量
+- 本地测试：`PORT=8080 npm run start`
+
+#### 智能端口处理
+- 自动忽略标准端口（HTTP 80, HTTPS 443）
+- 非标准端口自动添加到 URL 中
+- 开发环境动态生成 baseUrl
+
+#### 配置文件
+```bash
+# .env 文件示例
+NUXT_DEV_PORT=4000          # 开发服务器端口
+NUXT_DEV_HOST=0.0.0.0       # 开发服务器主机
+NUXT_DEV_NETWORK_HOST=192.168.1.100  # 局域网访问地址（可选）
+NUXT_PUBLIC_BASE_URL=https://your-domain.com  # 生产环境基础 URL
+```
+
+详细配置说明请参考：
+- [端口配置指南](./docs/port-configuration.md)
+- [URL 管理系统](./docs/url-management.md)
 
 ## 图标库
 
@@ -81,6 +132,16 @@ pnpm preview
 ## 更新日志
 
 ### 2025年1月
+
+#### URL 管理系统优化
+- ✨ 实现了统一的 URL 管理系统，消除硬编码 URL
+- ✨ 创建 `useBaseUrl` composable，提供 `getBaseUrl`、`getFullUrl`、`getCurrentUrl` 方法
+- ✨ 优化 `nuxt.config.ts` 配置，提取并缓存 `generateBaseUrl` 函数
+- ✨ 实现智能端口处理，自动忽略标准端口（80, 443）
+- ✨ 添加 SSR 兼容的 URL 处理，避免服务端渲染错误
+- 📝 新增 [URL 管理系统文档](./docs/url-management.md)
+- 🔧 解决了 `useBaseUrl` 重复导入警告
+- 🔧 修复了服务端渲染时 composable 调用的错误
 
 #### 测试页面优化
 - 🔧 修正了 SEO 测试页面中 i18n 测试按钮的链接跳转问题（从 `/i18n-test` 修正为 `/test/i18n-test`）

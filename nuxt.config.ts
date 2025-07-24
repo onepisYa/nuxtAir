@@ -8,10 +8,52 @@ type LocaleFilesArray = LocaleFileConfig[]
 // 强制类型断言函数，完全绕过官方类型检查
 const forceLocaleFiles = (files: LocaleFilesArray): LocaleFilesArray => files
 
+// 生成基础 URL 逻辑（执行一次并缓存结果）
+function generateBaseUrl(): string {
+  if (process.env.NODE_ENV === 'production') {
+    // 生产环境：智能组合 BASE_URL 和端口
+    const baseUrl = process.env.NUXT_PUBLIC_BASE_URL || 'https://your-domain.com'
+    const port = process.env.PORT
+    
+    if (!port) {
+      return baseUrl
+    }
+    
+    try {
+      const url = new URL(baseUrl)
+      const portNum = parseInt(port)
+      
+      // 忽略标准端口：HTTP 80, HTTPS 443
+      const isStandardPort = (url.protocol === 'http:' && portNum === 80) || 
+                           (url.protocol === 'https:' && portNum === 443)
+      
+      if (!isStandardPort) {
+        url.port = port
+      }
+      
+      return url.toString().replace(/\/$/, '')
+    } catch (error: any) {
+      // 如果 baseUrl 不是有效的 URL，直接返回
+      console.warn(`无效的 baseUrl (${baseUrl}):`, error)
+      return baseUrl
+    }
+  }
+  
+  // 开发环境：根据实际端口动态生成
+  const devPort = process.env.NUXT_DEV_PORT || '4000'
+  // 优先使用局域网地址，方便同事访问
+  const networkHost = process.env.NUXT_DEV_NETWORK_HOST
+  const devHost = networkHost || (process.env.NUXT_DEV_HOST === 'localhost' ? 'localhost' : process.env.NUXT_DEV_HOST || 'localhost')
+  return `http://${devHost}:${devPort}`
+}
+
+// 缓存生成的基础 URL，避免重复计算
+const cachedBaseUrl = generateBaseUrl()
+
 export default defineNuxtConfig({
   // 站点配置 - Nuxt SEO 核心配置
   site: {
-    url: process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com',
+    url: cachedBaseUrl,
     name: process.env.NUXT_PUBLIC_SITENAME || 'NuxtAir',
     description: 'A modern Nuxt.js application with i18n and SEO optimization',
     defaultLocale: 'en-US' // 与 i18n 默认语言保持一致
@@ -33,7 +75,7 @@ export default defineNuxtConfig({
   // i18n 配置
   i18n: {
     strategy: 'prefix_except_default', // 默认语言不添加前缀，其他语言添加前缀
-    baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com', // SEO 必需：生成完整的 alternate URLs
+    baseUrl: cachedBaseUrl, // SEO 必需：生成完整的 alternate URLs
     locales: [
       {
         code: 'en-US',
@@ -84,7 +126,7 @@ export default defineNuxtConfig({
         disallow: ['/admin', '/dev-api', '/prod-api', '/test-api']
       }
     ],
-    sitemap: `${process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'}/sitemap.xml`
+    sitemap: `${cachedBaseUrl}/sitemap.xml`
   },
 
   ogImage: {
@@ -151,11 +193,13 @@ export default defineNuxtConfig({
       imgHostname: process.env.NUXT_IMG_HOSTNAME,
       sitename: process.env.NUXT_PUBLIC_SITENAME,
       phonenumber: process.env.NUXT_PUBLIC_PHONENUMBER,
+      // 动态生成的基础 URL，智能处理端口组合
+      baseUrl: cachedBaseUrl
     },
   },
   devServer: {
-    port: 4000,
-    host: '0.0.0.0',
+    port: parseInt(process.env.NUXT_DEV_PORT || '4000'),
+    host: process.env.NUXT_DEV_HOST || '0.0.0.0',
   },
   future: {
     compatibilityVersion: 4,
@@ -169,6 +213,7 @@ export default defineNuxtConfig({
     // https://nuxt.com/docs/4.x/api/nuxt-config#nitro
     // preset: 'static',
     preset: 'node-server',
+    // 注意：生产环境端口由 PORT 环境变量控制，无需在此配置
     prerender: {
       //   crawlLinks: true,
       routes: ['/sitemap.xml']
@@ -283,8 +328,4 @@ export default defineNuxtConfig({
   pinia: {
     storesDirs: ['./app/stores/**'],
   },
-  // server: {
-  //   port: 4000,
-  //   host: '0.0.0.0',
-  // },
 })

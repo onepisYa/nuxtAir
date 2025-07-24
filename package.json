@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nuxi dev --dotenv .env --host",
     "generate": "nuxi generate --dotenv .env.production && node zip.js",
-    "build": "nuxi build",
+    "build": "nuxi build --dotenv .env",
     "build:prod": "nuxi build --dotenv .env.production",
     "preview": "nuxi preview",
     "postinstall": "nuxi prepare",
@@ -16,6 +16,12 @@
     "seo:validate": "node scripts/seo-validator.js",
     "seo:check": "npm run seo:validate",
     "seo:test": "npm run build && npm run seo:validate",
+    "port:test": "node scripts/test-port-config.js",
+    "test:baseurl": "node scripts/test-baseurl-generation.cjs",
+    "dev:3000": "NUXT_DEV_PORT=3000 npm run dev",
+    "dev:3001": "NUXT_DEV_PORT=3001 npm run dev",
+    "dev:4000": "NUXT_DEV_PORT=4000 npm run dev",
+    "dev:8080": "NUXT_DEV_PORT=8080 npm run dev",
     "alova": "alova"
   },
   "dependencies": {

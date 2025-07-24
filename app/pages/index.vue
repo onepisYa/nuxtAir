@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useBaseUrl } from '~/composables/useBaseUrl'
+
 const { t, locale } = useI18n()
 const route = useRoute()
+const { getBaseUrl, getCurrentUrl } = useBaseUrl()
 
 // 设置首页的 SEO 元数据
 useSeoMeta({
@@ -33,12 +36,12 @@ useSchemaOrg([
     name: () => t('pages.home.title'),
     description: () => t('pages.home.description'),
     inLanguage: locale.value,
-    url: () => `${process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'}${route.path}`,
+    url: () => getCurrentUrl(),
     mainEntity: {
       '@type': 'WebSite',
       name: 'NuxtAir',
       description: () => t('pages.home.description'),
-      url: process.env.NUXT_PUBLIC_BASE_URL || 'https://example.com'
+      url: getBaseUrl()
     }
   })
 ])
