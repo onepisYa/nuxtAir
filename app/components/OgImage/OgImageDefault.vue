@@ -2,12 +2,23 @@
   <div class="og-container">
     <!-- 渐变背景 -->
     <div class="bg-gradient" />
+    <!-- 关键点在于  https://nuxtseo.com/docs/og-image/guides/compatibility 
     
+    和 https://nuxtseo.com/docs/og-image/guides/styling
+
+    链接提到的内容、样式处理和兼容性配置
+    -->
     <!-- 装饰性几何图形 -->
     <div class="decorative-shapes">
-      <div class="shape shape-1" />
-      <div class="shape shape-2" />
-      <div class="shape shape-3" />
+      <div 
+        style="position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.05); width: 200px; height: 200px; top: -100px; right: -100px;"
+      />
+      <div 
+        style="position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.08); width: 150px; height: 150px; bottom: -75px; left: -75px;"
+      />
+      <div 
+        style="position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.06); width: 100px; height: 100px; top: 50%; right: 10%; transform: translateY(-50%);"
+      />
     </div>
     
     <!-- Logo 区域 -->
@@ -91,42 +102,13 @@ const tagline = computed(() =>
   pointer-events: none;
 }
 
-.shape {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.shape-1 {
-  width: 200px;
-  height: 200px;
-  top: -100px;
-  right: -100px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.shape-2 {
-  width: 150px;
-  height: 150px;
-  bottom: -75px;
-  left: -75px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.shape-3 {
-  width: 100px;
-  height: 100px;
-  top: 50%;
-  right: 10%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.06);
-}
+/* 装饰性几何图形现在使用内联样式，避免 Tailwind CSS 未知工具类警告 */
 
 .logo-container {
   position: absolute;
   top: 60px;
   left: 60px;
-  z-index: 10;
+  /* 移除 z-index 以避免 satori 警告 */
 }
 
 .logo-icon {
@@ -136,7 +118,7 @@ const tagline = computed(() =>
 
 .content {
   position: relative;
-  z-index: 10;
+  /* 移除 z-index 以避免 satori 警告 */
   text-align: center;
   color: white;
   max-width: 900px;

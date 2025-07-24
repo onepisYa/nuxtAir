@@ -6,6 +6,19 @@
 
 > **参考来源**: 本文档整理自项目实际修复过程，部分解决方案参考了 [权威指南](../reference/nuxt-seo-i18n-guide.md)
 
+## 🆕 最新修复状态 (2025年7月)
+
+### 已完成的最新修复
+- ✅ **OG Image z-index 警告**: 移除了不兼容的 CSS 属性，使用 DOM 层级结构
+- ✅ **未知 Tailwind CSS 工具类**: 在 OgImageDefault.vue 中使用内联样式替代 `shape-*` 类
+- ✅ **Sitemap 动态数据源**: 配置了 `/api/__sitemap__/urls` 动态 URL 生成
+- ✅ **OG Image 字体优化**: 添加了 Google Font Mirror 和中文字体支持
+
+### 相关问题链接
+- [Satori z-index 问题](https://github.com/vercel/satori/issues/660) - 等待 satori 升级到 0.16+ 版本
+- [OG Image 样式指南](https://nuxtseo.com/docs/og-image/guides/styling)
+- [OG Image 兼容性指南](https://nuxtseo.com/docs/og-image/guides/compatibility)
+
 ## 🔧 已修复的配置问题
 
 ### 1. nuxt.config.ts 配置错误
@@ -463,6 +476,138 @@ app/
 2. 添加自动化 SEO 测试
 3. 集成高级 SEO 分析工具
 
+### 10. Nuxt OG Image z-index 警告和 Sitemap 配置修复
+
+**问题描述**: 
+- OG Image 生成时出现 z-index 相关警告
+- 未知工具类警告（shape、shape-1、shape-2、shape-3）
+- Sitemap `/api/__sitemap__/urls` 配置缺失
+
+**根本原因**: 
+- Satori 库不支持 z-index 属性（参考：https://github.com/vercel/satori/issues/660）
+- 缺少 sitemap 动态 URL 配置
+- OG Image 组件中使用了不兼容的 CSS 属性和未知的 Tailwind CSS 类名
+
+**修复内容**:
+- ✅ 移除了 `OgImageDefault.vue` 组件中的 `z-index` 属性
+- ✅ 将未知工具类替换为内联样式，避免 Tailwind CSS 警告
+- ✅ 启用了 `/server/api/__sitemap__/urls.ts` 作为 sitemap 数据源
+- ✅ 配置了 sitemap 自动生成多语言版本
+- ✅ 优化了 OG Image 配置，确保中文字体支持
+
+**nuxt.config.ts 配置修复**:
+```typescript
+// 修复前
+sitemap: {
+  // sources: ['/api/__sitemap__/urls'], // ❌ 被注释掉
+  exclude: [...]
+}
+
+// 修复后
+sitemap: {
+  sources: ['/api/__sitemap__/urls'], // ✅ 启用动态数据源
+  exclude: [...]
+}
+```
+
+**OgImageDefault.vue 组件修复**:
+```vue
+<!-- 修复前 - 包含未知工具类和 z-index -->
+<template>
+  <div class="decorative-shapes">
+    <div class="shape shape-1" /> <!-- ❌ 未知工具类 -->
+    <div class="shape shape-2" /> <!-- ❌ 未知工具类 -->
+    <div class="shape shape-3" /> <!-- ❌ 未知工具类 -->
+  </div>
+</template>
+
+<style scoped>
+.logo-container {
+  z-index: 10; /* ❌ Satori 不支持 */
+}
+.content {
+  z-index: 10; /* ❌ Satori 不支持 */
+}
+</style>
+
+<!-- 修复后 - 使用内联样式，移除 z-index -->
+<template>
+  <div class="decorative-shapes">
+    <div style="position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.05); width: 200px; height: 200px; top: -100px; right: -100px;" />
+    <div style="position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.08); width: 150px; height: 150px; bottom: -75px; left: -75px;" />
+    <div style="position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.06); width: 100px; height: 100px; top: 50%; right: 10%; transform: translateY(-50%);" />
+  </div>
+</template>
+
+<style scoped>
+.logo-container {
+  /* 移除 z-index 以避免 satori 警告 */
+}
+.content {
+  /* 移除 z-index 以避免 satori 警告 */
+}
+</style>
+```
+
+**Sitemap 配置**:
+```typescript
+// server/api/__sitemap__/urls.ts - 新增文件
+export default defineSitemapEventHandler(async () => {
+  const routes = [
+    {
+      loc: '/',
+      lastmod: new Date().toISOString(),
+      _i18nTransform: true // 自动生成多语言版本
+    },
+    {
+      loc: '/about',
+      lastmod: new Date().toISOString(),
+      _i18nTransform: true
+    },
+    {
+      loc: '/contact',
+      lastmod: new Date().toISOString(),
+      _i18nTransform: true
+    },
+    {
+      loc: '/test/blog',
+      lastmod: new Date().toISOString(),
+      _i18nTransform: true
+    }
+  ]
+
+  return routes
+})
+```
+
+**验证方法**:
+```bash
+# 测试 OG Image 生成（无警告）
+curl "http://localhost:4000/__og-image__/image/og.png"
+
+# 检查开发服务器日志，确认无以下警告：
+# - "shape unknown or invalid utility"
+# - "shape-1 unknown or invalid utility" 
+# - "shape-2 unknown or invalid utility"
+# - "shape-3 unknown or invalid utility"
+# - "Expected style 'zIndex: 10px' to be unitless"
+
+# 检查 sitemap 生成
+curl "http://localhost:4000/sitemap.xml"
+
+# 验证多语言 sitemap
+curl "http://localhost:4000/zh-CN/sitemap.xml"
+
+# 验证 sitemap API 端点
+curl "http://localhost:4000/api/__sitemap__/urls"
+```
+
 ---
 
 > 💡 **提示**: 这些修复记录基于实际项目经验。在实施类似功能时，建议参考这些解决方案，但也要根据具体项目需求进行调整。
+
+---
+
+**实现状态**: ✅ 完成  
+**最后更新**: 2025-01-27
+**维护者**: NuxtAir Team

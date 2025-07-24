@@ -104,6 +104,86 @@ defineOgImage({
 })
 ```
 
+### ⚠️ OG Image 常见问题
+
+#### z-index 警告解决方案
+```vue
+<!-- ❌ 避免在 OG Image 组件中使用 z-index -->
+<style scoped>
+.logo-container {
+  z-index: 10; /* Satori 不支持，会产生警告 */
+}
+</style>
+
+<!-- ✅ 移除 z-index，使用 DOM 层级结构 -->
+<template>
+  <div class="og-container">
+    <!-- 背景层 -->
+    <div class="bg-gradient" />
+    
+    <!-- 装饰层 - 使用内联样式避免未知 CSS 类 -->
+    <div class="decorative-shapes">
+      <div style="position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.05); width: 200px; height: 200px; top: -100px; right: -100px;" />
+    </div>
+    
+    <!-- 内容层 - DOM 顺序决定层级 -->
+    <div class="content">
+      <!-- 内容自然在最上层 -->
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.logo-container {
+  position: absolute;
+  top: 60px;
+  left: 60px;
+  /* 移除 z-index 以避免 satori 警告 */
+}
+
+.content {
+  position: relative;
+  /* 移除 z-index 以避免 satori 警告 */
+}
+</style>
+```
+
+#### 优化的 OG Image 配置
+```typescript
+// nuxt.config.ts - 优化的 OG Image 配置
+ogImage: {
+  enabled: true,
+  defaults: {
+    component: 'OgImageDefault',
+    width: 1200,
+    height: 630
+  },
+  googleFontMirror: true, // 解决字体下载问题
+  fonts: [
+    'Inter:400',
+    'Inter:700',
+    'Noto+Sans:400',
+    'Noto+Sans:700',
+    // 中文字体支持
+    'Noto+Sans+SC:400',
+    'Noto+Sans+SC:700'
+  ]
+}
+```
+
+#### 中文字体配置
+```typescript
+// nuxt.config.ts
+ogImage: {
+  fonts: [
+    'Inter:400',
+    'Inter:700',
+    'Noto+Sans+SC:400', // 中文字体
+    'Noto+Sans+SC:700'
+  ]
+}
+```
+
 ## 🔧 常用 Schema.org 类型
 
 ### 网页
@@ -200,6 +280,47 @@ ogImage: {
     cacheMaxAge: 60 * 60 * 24 * 7 // 7 天
   }
 }
+```
+
+## 🗺️ Sitemap 配置
+
+### 动态 URL 配置
+```typescript
+// server/api/__sitemap__/urls.ts
+export default defineSitemapEventHandler(async () => {
+  const routes = [
+    {
+      loc: '/',
+      lastmod: new Date().toISOString(),
+      _i18nTransform: true // 自动多语言
+    },
+    {
+      loc: '/about',
+      lastmod: new Date().toISOString(),
+      _i18nTransform: true
+    }
+  ]
+
+  // 动态路由示例
+  // const posts = await $fetch('/api/posts')
+  // const dynamicRoutes = posts.map(post => ({
+  //   loc: `/blog/${post.slug}`,
+  //   lastmod: post.updatedAt,
+  //   _i18nTransform: true
+  // }))
+  // routes.push(...dynamicRoutes)
+
+  return routes
+})
+```
+
+### Sitemap 验证
+```bash
+# 检查主 sitemap
+curl "http://localhost:4000/sitemap.xml"
+
+# 检查多语言 sitemap
+curl "http://localhost:4000/zh-CN/sitemap.xml"
 ```
 
 ## 🔍 测试和验证工具

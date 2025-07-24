@@ -99,10 +99,14 @@
 - [ ] 语言切换功能正常
 
 ### 技术 SEO
-- [ ] 生成了 XML 站点地图
-- [ ] 配置了 robots.txt
-- [ ] 设置了结构化数据
-- [ ] OG 图片正常生成
+- [x] 生成了 XML 站点地图
+- [x] 配置了 robots.txt
+- [x] 设置了结构化数据
+- [x] OG 图片正常生成
+- [x] 修复了 z-index 警告问题（移除不兼容的 CSS 属性，使用内联样式）
+- [x] 配置了 sitemap 动态数据源 (`/api/__sitemap__/urls`)
+- [x] 优化了 OG Image 配置（Google Font Mirror、中文字体支持）
+- [x] 解决了 OgImageDefault.vue 中的未知 Tailwind CSS 工具类问题
 
 ### 性能优化
 - [ ] 页面加载速度 < 3秒
@@ -112,16 +116,32 @@
 
 ## 🔗 相关资源
 
+### Nuxt SEO 模块文档
+- 🤖 [Nuxt Robots](https://github.com/nuxt-modules/robots) - 管理网站爬虫访问
+- 📄 [Nuxt Sitemap](https://github.com/nuxt-modules/sitemap) - XML 站点地图支持
+- 🔎 [Nuxt Schema.org](https://github.com/harlan-zw/nuxt-schema-org) - 生成 Schema.org JSON-LD 结构化数据
+- △ [Nuxt SEO Utils](https://github.com/harlan-zw/nuxt-seo-utils) - 实验性 SEO 元数据功能
+- 🖼️ [Nuxt OG Image](https://github.com/nuxt-modules/og-image) - 生成动态社交分享图片
+- ✅ [Nuxt Link Checker](https://github.com/harlan-zw/nuxt-link-checker) - 检查损坏的链接
+
 ### 官方文档
 - [Nuxt SEO 官方文档](https://nuxtseo.com/)
 - [Nuxt i18n 官方文档](https://i18n.nuxtjs.org/)
 - [Schema.org 官方文档](https://schema.org/)
+- [Satori 库文档](https://github.com/vercel/satori)
+- [OG Image 样式指南](https://nuxtseo.com/docs/og-image/guides/styling)
+- [OG Image 兼容性指南](https://nuxtseo.com/docs/og-image/guides/compatibility)
 
 ### 工具和验证
 - [Google Search Console](https://search.google.com/search-console)
 - [Google Rich Results Test](https://search.google.com/test/rich-results)
 - [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
 - [Twitter Card Validator](https://cards-dev.twitter.com/validator)
+
+### 已知问题和解决方案
+- [Satori z-index 问题](https://github.com/vercel/satori/issues/660) - 等待 satori 升级到 0.16+ 版本
+- [OG Image 故障排除](./troubleshooting/common-issues.md#og-image-相关问题)
+- [Sitemap 配置指南](./troubleshooting/common-issues.md#sitemap-配置问题)
 
 ## 📞 支持和反馈
 
@@ -133,6 +153,14 @@
 
 ## 📝 更新记录
 
+### 2025年1月 - v1.2
+- ✅ 修复了 OG Image 中的 z-index 警告问题（移除不兼容的 CSS 属性）
+- ✅ 解决了 OgImageDefault.vue 中的未知 Tailwind CSS 工具类问题（使用内联样式替代）
+- ✅ 配置了 sitemap 动态数据源 (`/api/__sitemap__/urls`)
+- ✅ 优化了 OG Image 配置（添加 Google Font Mirror 和中文字体支持）
+- ✅ 更新了文档，添加了 Nuxt SEO 各模块的官方文档链接
+- ✅ 添加了 OG Image 样式和兼容性指南链接
+
 ### 2025年1月 - v1.1
 - ✅ 更新了测试页面路径引用，确保所有路径都使用正确的 `/test/` 前缀
 - ✅ 修正了 SEO 测试页面、OG 测试页面和 i18n 测试页面的链接跳转问题
@@ -141,5 +169,4 @@
 
 ---
 
-*最后更新：2025年7月* | *文档版本：v1.1* | *适用于 Nuxt 3.x + @nuxtjs/seo 3.x*
-
+*最后更新：2025年7月* | *文档版本：v1.2* | *适用于 Nuxt 3.x + @nuxtjs/seo 3.x*

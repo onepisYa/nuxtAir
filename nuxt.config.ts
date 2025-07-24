@@ -109,6 +109,9 @@ export default defineNuxtConfig({
 
   // SEO 模块配置
   sitemap: {
+    // 提供自定义的 sitemap 源
+    // 用户源允许您手动配置您的站点地图 URL 的来源。这些对于不使用预渲染发现的动态路由特别有用。
+    // https://nuxtseo.com/docs/sitemap/guides/data-sources
     sources: ['/api/__sitemap__/urls'],
     exclude: [
       '/admin/**',

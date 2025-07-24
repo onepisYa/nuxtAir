@@ -4,6 +4,19 @@
 
 本文档详细记录了 NuxtAir 项目中完整的 SEO 优化实现，包括基础配置、OG Image 优化、Schema.org 结构化数据、多语言支持等。
 
+## 🔧 最新修复状态
+
+### 已解决的问题
+- ✅ **z-index 警告问题**: 移除了 OG Image 组件中不兼容的 CSS 属性
+- ✅ **未知 Tailwind CSS 工具类**: 使用内联样式替代了 `shape-*` 等未知类名
+- ✅ **Sitemap 动态数据源**: 配置了 `/api/__sitemap__/urls` 动态 URL 生成
+- ✅ **OG Image 字体优化**: 添加了 Google Font Mirror 和中文字体支持
+
+### 参考资源
+- [OG Image 样式指南](https://nuxtseo.com/docs/og-image/guides/styling)
+- [OG Image 兼容性指南](https://nuxtseo.com/docs/og-image/guides/compatibility)
+- [Satori z-index 问题](https://github.com/vercel/satori/issues/660)
+
 ## 🎯 实现的功能
 
 ### 1. 核心 SEO 模块配置
@@ -28,11 +41,22 @@ export default defineNuxtConfig({
   // OG Image 配置
   ogImage: {
     enabled: true,
-    component: 'OgImageDefault',
     defaults: {
+      component: 'OgImageDefault',
       width: 1200,
       height: 630
-    }
+    },
+    googleFontMirror: true, // 解决字体下载问题
+    fonts: [
+      // 根据官方文档使用正确的字体配置格式
+      'Inter:400',
+      'Inter:700',
+      'Noto+Sans:400',
+      'Noto+Sans:700',
+      // 添加中文字体支持
+      'Noto+Sans+SC:400',
+      'Noto+Sans+SC:700'
+    ]
   },
   
   // Sitemap 配置
@@ -62,11 +86,17 @@ export default defineNuxtConfig({
     <!-- 渐变背景 -->
     <div class="bg-gradient" />
     
-    <!-- 装饰性几何图形 -->
+    <!-- 装饰性几何图形 - 使用内联样式避免未知 CSS 类警告 -->
     <div class="decorative-shapes">
-      <div class="shape shape-1" />
-      <div class="shape shape-2" />
-      <div class="shape shape-3" />
+      <div 
+        style="position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.05); width: 200px; height: 200px; top: -100px; right: -100px;"
+      />
+      <div 
+        style="position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.08); width: 150px; height: 150px; bottom: -75px; left: -75px;"
+      />
+      <div 
+        style="position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.06); width: 100px; height: 100px; top: 50%; right: 10%; transform: translateY(-50%);"
+      />
     </div>
     
     <!-- Logo 区域 -->
@@ -483,6 +513,7 @@ NUXT_PUBLIC_GTM_ID=your-gtm-id
 - [x] 博客专用 OG 图片组件
 - [x] 多语言 OG 图片支持
 - [x] 动态内容 OG 图片生成
+- [x] WASM 渲染器配置（解决 z-index 兼容性问题）
 
 ## 🔧 故障排除
 

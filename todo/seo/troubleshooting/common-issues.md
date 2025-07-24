@@ -515,6 +515,156 @@ if (process.dev) {
 </script>
 ```
 
+## 🖼️ OG Image 相关问题
+
+### Q11: OG Image 生成时出现 z-index 警告
+
+**症状**: 访问 `/__og-image__/image/og.png` 时终端显示 z-index 相关警告
+
+**原因**: Satori 库不支持 z-index 属性（参考：https://github.com/vercel/satori/issues/660）
+
+**解决方案**:
+
+1. **移除 OG Image 组件中的 z-index 属性**:
+```vue
+<!-- components/OgImage/OgImageDefault.vue -->
+<style scoped>
+.logo-container {
+  position: absolute;
+  top: 60px;
+  left: 60px;
+  /* 移除 z-index: 10; */
+}
+
+.content {
+  position: relative;
+  /* 移除 z-index: 10; */
+  text-align: center;
+}
+</style>
+```
+
+2. **使用层级结构代替 z-index**:
+```vue
+<template>
+  <div class="og-container">
+    <!-- 背景层 -->
+    <div class="bg-gradient" />
+    
+    <!-- 装饰层 -->
+    <div class="decorative-shapes">
+      <!-- 装饰元素 -->
+    </div>
+    
+    <!-- 内容层（自然在最上层） -->
+    <div class="logo-container">
+      <!-- Logo -->
+    </div>
+    
+    <div class="content">
+      <!-- 主要内容 -->
+    </div>
+  </div>
+</template>
+```
+
+### Q12: 如何配置 WASM 渲染器解决 z-index 问题
+
+**症状**: 希望使用 WASM 渲染器来解决 z-index 警告并提高 OG Image 生成性能
+
+**解决方案**:
+
+1. **在 nuxt.config.ts 中配置 WASM 渲染器**:
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  ogImage: {
+    enabled: true,
+    renderer: 'satori-wasm', // 使用 WASM 渲染器解决 z-index 问题
+    defaults: {
+      component: 'OgImageDefault',
+      width: 1200,
+      height: 630
+    },
+    googleFontMirror: true,
+    fonts: [
+      'Inter:400',
+      'Inter:700',
+      'Noto+Sans+SC:400',
+      'Noto+Sans+SC:700'
+    ]
+  }
+})
+```
+
+2. **验证配置生效**:
+```bash
+# 重启开发服务器
+npm run dev
+
+# 测试 OG Image 生成
+curl -I http://localhost:4000/__og-image__/image/og.png
+```
+
+**注意**: WASM 渲染器可以有效解决 Satori 库的 z-index 兼容性问题，同时提供更好的性能。
+
+## 🗺️ Sitemap 配置问题
+
+### Q13: 缺少 `/api/__sitemap__/urls` 配置
+
+**症状**: Sitemap 模块无法找到动态 URL 配置
+
+**解决方案**:
+
+1. **创建 sitemap API 路由**:
+```typescript
+// server/api/__sitemap__/urls.ts
+export default defineSitemapEventHandler(async () => {
+  // 静态页面路由
+  const routes = [
+    {
+      loc: '/',
+      lastmod: new Date().toISOString(),
+      _i18nTransform: true // 自动生成多语言版本
+    },
+    {
+      loc: '/about',
+      lastmod: new Date().toISOString(),
+      _i18nTransform: true
+    },
+    {
+      loc: '/contact',
+      lastmod: new Date().toISOString(),
+      _i18nTransform: true
+    }
+  ]
+
+  // 可以添加动态路由
+  try {
+    // const posts = await $fetch('/api/posts')
+    // const dynamicRoutes = posts.map(post => ({
+    //   loc: `/blog/${post.slug}`,
+    //   lastmod: post.updatedAt,
+    //   _i18nTransform: true
+    // }))
+    // routes.push(...dynamicRoutes)
+  } catch (error) {
+    console.warn('Failed to fetch dynamic routes for sitemap:', error)
+  }
+
+  return routes
+})
+```
+
+2. **验证 sitemap 生成**:
+```bash
+# 检查主 sitemap
+curl "http://localhost:4000/sitemap.xml"
+
+# 检查多语言 sitemap
+curl "http://localhost:4000/zh-CN/sitemap.xml"
+```
+
 ## 📞 获取帮助
 
 如果以上解决方案都无法解决你的问题：
