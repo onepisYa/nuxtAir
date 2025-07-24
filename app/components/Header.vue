@@ -33,7 +33,8 @@ const menu = ref()
       </div>
       <div class="gap-x-4 flex-center">
         <!-- v-if="user().isLogin" -->
-        <UButton  color="success" variant="ghost" size="xl" link to="/user/info">用户名</UButton>
+        <!-- /user/info -->
+        <UButton  color="success" variant="ghost" size="xl" link to="/">用户名</UButton>
       </div>
       <USlideover v-model:open="open" title="标题 hello SlideOver" side="right" :ui="{ wrapper: 'w-3/4'}" class=""
         description="描述 Lorem ipsum dolor sit amet, consectetur adipiscing elit."
