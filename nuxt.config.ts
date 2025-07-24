@@ -151,7 +151,6 @@ export default defineNuxtConfig({
       'Noto+Sans+SC:700'
     ]
   },
-
   seo: {
     // SEO Utils 配置
     automaticDefaults: true
@@ -159,6 +158,9 @@ export default defineNuxtConfig({
   // ssr: false,
   ssr: true,
   imports: {
+    dirs:[
+      'composables/alova/index.ts',
+    ],
     presets: [
       {
         from: 'alova/client',
