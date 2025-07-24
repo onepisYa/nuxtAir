@@ -64,7 +64,12 @@ const tagline = computed(() =>
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  font-family: 'Noto Sans SC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* 优化字体配置，确保中文字体正确显示 */
+  font-family: 'Noto Sans SC', 'Noto Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* 确保字体渲染质量 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 .bg-gradient {

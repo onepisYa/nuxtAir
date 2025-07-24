@@ -21,7 +21,7 @@ defineOgImage({
   props: {
     title: () => t('pages.home.ogTitle'),
     description: () => t('pages.home.ogDescription'),
-    siteName: 'NuxtAir',
+    siteName: () => locale.value === 'zh-CN' ? 'NuxtAir 官网' : 'NuxtAir',
     locale: () => locale.value
   }
 })
