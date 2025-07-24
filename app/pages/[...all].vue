@@ -104,7 +104,7 @@ onMounted(() => {
               关于我们
             </NuxtLink>
             <NuxtLink 
-              to="/blog" 
+              to="/test/blog" 
               class="px-3 py-1 text-sm bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
             >
               博客

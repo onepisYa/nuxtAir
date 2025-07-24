@@ -116,7 +116,7 @@ useSchemaOrg([
 
 const breadItems  = computed(() => [
   { label: t('pages.home.title'), to: '/' },
-  { label: t('pages.blog.title'), to: '/blog' },
+  { label: t('pages.blog.title'), to: '/test/blog' },
   { label: post.value?.title, to: route.path },
 ])
 </script>
@@ -158,7 +158,7 @@ const breadItems  = computed(() => [
         
         <footer class="mt-12 pt-8 border-t border-gray-200">
           <div class="flex justify-between items-center">
-            <UButton to="/blog" variant="outline">
+            <UButton to="/test/blog" variant="outline">
               ← {{ locale === 'zh-CN' ? '返回博客' : 'Back to Blog' }}
             </UButton>
             <div class="flex gap-2">

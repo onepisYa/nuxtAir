@@ -89,7 +89,7 @@ const breadItems = computed(() => [
           >
             <h2 class="text-2xl font-semibold text-gray-900 mb-3">
               <NuxtLink 
-                :to="`/blog/${post.slug}`" 
+                :to="`/test/blog/${post.slug}`" 
                 class="hover:text-primary transition-colors"
               >
                 {{ post.title }}
@@ -99,7 +99,7 @@ const breadItems = computed(() => [
             <div class="flex items-center justify-between">
               <time class="text-sm text-gray-500">{{ post.date }}</time>
               <UButton 
-                :to="`/blog/${post.slug}`" 
+                :to="`/test/blog/${post.slug}`" 
                 variant="outline" 
                 size="sm"
               >

@@ -58,7 +58,7 @@ useSchemaOrg([
           <UButton to="/about" size="lg" class="px-8">
             {{ t('pages.about.title') }}
           </UButton>
-          <UButton to="/blog" variant="outline" size="lg" class="px-8">
+          <UButton to="/test/blog" variant="outline" size="lg" class="px-8">
             {{ t('pages.blog.title') }}
           </UButton>
         </div>

@@ -199,13 +199,13 @@ const breadItems = computed(() => [
             <UButton to="/about" variant="outline" class="justify-start">
               {{ t('pages.about.title') }}
             </UButton>
-            <UButton to="/blog" variant="outline" class="justify-start">
+            <UButton to="/test/blog" variant="outline" class="justify-start">
               {{ t('pages.blog.title') }}
             </UButton>
-            <UButton to="/blog/nuxtjs-modern-websites" variant="outline" class="justify-start">
+            <UButton to="/test/blog/nuxtjs-modern-websites" variant="outline" class="justify-start">
               {{ locale === 'zh-CN' ? '博客文章示例' : 'Sample Blog Post' }}
             </UButton>
-            <UButton to="/i18n-test" variant="outline" class="justify-start">
+            <UButton to="/test/i18n-test" variant="outline" class="justify-start">
               {{ locale === 'zh-CN' ? 'i18n 测试' : 'i18n Test' }}
             </UButton>
           </div>

@@ -41,11 +41,11 @@
 - 配置了 AboutPage 类型的结构化数据
 - 支持多语言面包屑导航
 
-✅ **博客列表页 SEO** (`/app/pages/blog/index.vue`)
+✅ **博客列表页 SEO** (`/app/pages/test/blog/index.vue`)
 - 配置了 Blog 类型的结构化数据
 - 实现了动态内容的国际化
 
-✅ **博客文章页 SEO** (`/app/pages/blog/[slug].vue`)
+✅ **博客文章页 SEO** (`/app/pages/test/blog/[slug].vue`)
 - 实现了动态路由的 SEO 配置
 - 添加了 BlogPosting 结构化数据
 - 配置了文章级别的 meta 标签（author、tags 等）
@@ -73,7 +73,7 @@
 
 ### 6. 测试页面
 
-✅ **SEO 测试页面** (`/app/pages/seo-test/index.vue`)
+✅ **SEO 测试页面** (`/app/pages/test/seo-test/index.vue`)
 - 创建了综合性的 SEO 功能测试页面
 - 展示了所有 SEO 功能的实现状态
 - 包含语言切换和功能检查
@@ -87,10 +87,10 @@
 pnpm dev
 
 # 访问以下 URL 测试功能：
-http://localhost:4000/seo-test  # SEO 测试页面
-http://localhost:4000/about     # 关于页面
-http://localhost:4000/blog      # 博客列表
-http://localhost:4000/blog/nuxtjs-modern-websites  # 博客文章
+http://localhost:4000/test/seo-test  # SEO 测试页面
+http://localhost:4000/about          # 关于页面
+http://localhost:4000/test/blog      # 博客列表
+http://localhost:4000/test/blog/nuxtjs-modern-websites  # 博客文章
 ```
 
 ### 2. 测试多语言功能
@@ -180,11 +180,12 @@ app/
     ├── index.vue               # 首页 SEO
     ├── about/
     │   └── index.vue           # 关于页面 SEO + 自定义路径
-    ├── blog/
-    │   ├── index.vue           # 博客列表 SEO
-    │   └── [slug].vue          # 动态博客文章 SEO
-    └── seo-test/
-        └── index.vue           # SEO 测试页面
+    └── test/                   # 测试页面目录
+        ├── blog/
+        │   ├── index.vue       # 博客列表 SEO
+        │   └── [slug].vue      # 动态博客文章 SEO
+        └── seo-test/
+            └── index.vue       # SEO 测试页面
 
 i18n/
 ├── locales/

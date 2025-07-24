@@ -198,18 +198,18 @@ defineOgImage({
 const refreshKey = ref(0)
 const currentOgImageUrl = computed(() => {
   const langPath = locale.value === 'zh-CN' ? '/zh-CN' : ''
-  return `/__og-image__/image${langPath}/og-test/og.png?t=${refreshKey.value}`
+  return `/__og-image__/image${langPath}/test/og-test/og.png?t=${refreshKey.value}`
 })
 const testOgImageUrl = computed(() => {
   const langPath = locale.value === 'zh-CN' ? '/zh-CN' : ''
-  return `/__og-image__/image${langPath}/og-test/og.png?component=OgImageTest&title=${encodeURIComponent(currentTitle.value)}&description=${encodeURIComponent(currentDescription.value)}&author=${encodeURIComponent(currentAuthor.value)}&locale=${locale.value}`
+  return `/__og-image__/image${langPath}/test/og-test/og.png?component=OgImageTest&title=${encodeURIComponent(currentTitle.value)}&description=${encodeURIComponent(currentDescription.value)}&author=${encodeURIComponent(currentAuthor.value)}&locale=${locale.value}`
 })
 
 const chineseOgImageUrl = computed(() => 
-  `/__og-image__/image/zh-CN/og-test/og.png?component=OgImageTest&title=${encodeURIComponent(chineseTitle)}&description=${encodeURIComponent(chineseDescription)}&author=${encodeURIComponent(chineseAuthor)}&locale=zh-CN`
+  `/__og-image__/image/zh-CN/test/og-test/og.png?component=OgImageTest&title=${encodeURIComponent(chineseTitle)}&description=${encodeURIComponent(chineseDescription)}&author=${encodeURIComponent(chineseAuthor)}&locale=zh-CN`
 )
 const englishOgImageUrl = computed(() => 
-  `/__og-image__/image/og-test/og.png?component=OgImageTest&title=${encodeURIComponent(englishTitle)}&description=${encodeURIComponent(englishDescription)}&author=${encodeURIComponent(englishAuthor)}&locale=en-US`
+  `/__og-image__/image/test/og-test/og.png?component=OgImageTest&title=${encodeURIComponent(englishTitle)}&description=${encodeURIComponent(englishDescription)}&author=${encodeURIComponent(englishAuthor)}&locale=en-US`
 )
 
 // 语言切换功能
@@ -217,9 +217,9 @@ const switchToLocale = async (newLocale: 'zh-CN' | 'en-US') => {
   await setLocale(newLocale)
   // 可选：导航到对应语言的路径
   if (newLocale === 'zh-CN') {
-    await router.push('/zh-CN/og-test')
+    await router.push('/zh-CN/test/og-test')
   } else {
-    await router.push('/og-test')
+    await router.push('/test/og-test')
   }
 }
 

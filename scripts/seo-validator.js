@@ -179,8 +179,8 @@ class SEOValidator {
     const pages = [
       'app/pages/index.vue',
       'app/pages/about/index.vue',
-      'app/pages/blog/index.vue',
-      'app/pages/blog/[slug].vue'
+      'app/pages/test/blog/index.vue',
+      'app/pages/test/blog/[slug].vue'
     ]
     
     pages.forEach(page => {
