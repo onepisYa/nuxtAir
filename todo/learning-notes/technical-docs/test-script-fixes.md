@@ -125,4 +125,4 @@ ps aux | grep -E '(nuxt|node.*dev)' | grep -v grep
 
 ## 相关文件
 
-- <mcfile name="test-port-config.cjs" path="scripts/test-port-config.cjs"></mcfile>
+- `scripts/test-port-config.cjs` - 测试脚本文件

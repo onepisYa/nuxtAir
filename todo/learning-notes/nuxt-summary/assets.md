@@ -1,7 +1,7 @@
 - [assets](https://nuxt.com/docs/4.x/getting-started/assets)
 
 
-该网页是Nuxt v4中关于“Assets（资产）”的文档页面，核心内容及要点如下：
+该网页是Nuxt v4中关于"Assets（资产）"的文档页面，核心内容及要点如下：
 
 1. **核心主题**：介绍Nuxt 4.0中处理样式表、字体、图片等资产的两种目录方式。
 2. **资产目录说明**：

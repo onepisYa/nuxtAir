@@ -108,8 +108,41 @@ NUXT_PUBLIC_BASE_URL=https://your-domain.com  # 生产环境基础 URL
 ```
 
 详细配置说明请参考：
-- [端口配置指南](./docs/port-configuration.md)
-- [URL 管理系统](./docs/url-management.md)
+- [端口配置指南](./todo/learning-notes/technical-docs/port-configuration.md)
+- [URL 管理系统](./todo/learning-notes/technical-docs/url-management.md)
+
+## 文档结构
+
+### 项目管理 (`todo/`)
+存放项目待办事项、学习笔记和技术总结：
+- `todo.md` - 项目待办事项列表
+- `template-review.md` - 模板审查记录
+- `index.md` - UI库选择和依赖安装说明
+- `learning-notes/` - 学习笔记和技术总结
+  - `nuxt-summary/` - Nuxt.js 学习笔记
+    - `i18n-implementation-guide.md` - 国际化实现指南
+    - `nuxt-custom-route.md` - 自定义路由配置
+    - `nuxt-tailwind.config.md` - Tailwind CSS 配置说明
+    - `nuxt-ui-modules.md` - Nuxt UI 模块说明
+    - `vue-i18n-migration-guide.md` - Vue I18n 迁移指南
+    - `composables/index.md` - Composables 使用说明
+    - `concept/` - 核心概念文档
+      - `auto-imports.md` - 自动导入机制
+      - `nuxt-lifecycle.md` - Nuxt 生命周期
+      - `rendering.md` - 渲染模式总结
+  - `technical-docs/` - 技术文档
+    - `port-configuration.md` - 端口配置和智能处理指南
+    - `url-management.md` - URL 管理系统实现和使用
+    - `test-pages-exclusion.md` - 测试页面排除配置
+    - `test-script-fixes.md` - 测试脚本进程管理修复
+  - `seo/` - SEO 优化文档和实施指南
+
+### 文档引用关系
+- 主 README 引用 `todo/learning-notes/technical-docs/` 下的技术文档
+- 各技术文档间相互引用，形成完整的知识体系
+- `todo/learning-notes/` 下的文档主要用于学习记录和问题排查
+- 所有文档都保持与代码实现的一致性
+- 原 `docs/` 目录下的文档已整理到 `todo/learning-notes/technical-docs/` 中
 
 ## 图标库
 
@@ -139,7 +172,7 @@ NUXT_PUBLIC_BASE_URL=https://your-domain.com  # 生产环境基础 URL
 - ✨ 优化 `nuxt.config.ts` 配置，提取并缓存 `generateBaseUrl` 函数
 - ✨ 实现智能端口处理，自动忽略标准端口（80, 443）
 - ✨ 添加 SSR 兼容的 URL 处理，避免服务端渲染错误
-- 📝 新增 [URL 管理系统文档](./docs/url-management.md)
+- 📝 新增 [URL 管理系统文档](./todo/learning-notes/technical-docs/url-management.md)
 - 🔧 解决了 `useBaseUrl` 重复导入警告
 - 🔧 修复了服务端渲染时 composable 调用的错误
 

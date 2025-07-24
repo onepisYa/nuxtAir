@@ -38,6 +38,7 @@ NUXT_DEV_NETWORK_HOST=192.168.1.100
 
 - **默认值**: 自动检测本机局域网 IP
 - **作用**: 用于生成局域网 baseUrl，方便同事访问
+- **优先级**: 高于 NUXT_DEV_HOST，当设置时会覆盖主机配置
 - **使用场景**: 团队开发时，其他设备需要访问开发服务器
 
 ### 生产环境端口配置
@@ -246,11 +247,75 @@ NUXT_DEV_PORT=4000
 NUXT_PUBLIC_BASE_URL=https://your-domain.com
 ```
 
+## 代码实现
+
+### generateBaseUrl 函数实现
+
+```typescript
+// 生成基础 URL 逻辑（执行一次并缓存结果）
+function generateBaseUrl(): string {
+  if (process.env.NODE_ENV === 'production') {
+    // 生产环境：智能组合 BASE_URL 和端口
+    const baseUrl = process.env.NUXT_PUBLIC_BASE_URL || 'https://your-domain.com'
+    const port = process.env.PORT
+    
+    if (!port) {
+      return baseUrl
+    }
+    
+    try {
+      const url = new URL(baseUrl)
+      const portNum = parseInt(port)
+      
+      // 忽略标准端口：HTTP 80, HTTPS 443
+      const isStandardPort = (url.protocol === 'http:' && portNum === 80) || 
+                           (url.protocol === 'https:' && portNum === 443)
+      
+      if (!isStandardPort) {
+        url.port = port
+      }
+      
+      return url.toString().replace(/\/$/, '')
+    } catch (error: any) {
+      // 如果 baseUrl 不是有效的 URL，直接返回
+      console.warn(`无效的 baseUrl (${baseUrl}):`, error)
+      return baseUrl
+    }
+  }
+  
+  // 开发环境：根据实际端口动态生成
+  const devPort = process.env.NUXT_DEV_PORT || '4000'
+  // 优先使用局域网地址，方便同事访问
+  const networkHost = process.env.NUXT_DEV_NETWORK_HOST
+  const devHost = networkHost || (process.env.NUXT_DEV_HOST === 'localhost' ? 'localhost' : process.env.NUXT_DEV_HOST || 'localhost')
+  return `http://${devHost}:${devPort}`
+}
+
+// 缓存生成的基础 URL，避免重复计算
+const cachedBaseUrl = generateBaseUrl()
+```
+
+### nuxt.config.ts 配置
+
+```typescript
+export default defineNuxtConfig({
+  devServer: {
+    port: parseInt(process.env.NUXT_DEV_PORT || '4000'),
+    host: process.env.NUXT_DEV_HOST || '0.0.0.0',
+  },
+  runtimeConfig: {
+    public: {
+      baseUrl: cachedBaseUrl // 使用缓存的基础 URL
+    }
+  }
+})
+```
+
 ## 相关文件
 
 - `.env` - 环境变量配置
 - `.env.example` - 环境变量配置示例
 - `nuxt.config.ts` - Nuxt 配置文件
 - `app/composables/useBaseUrl.ts` - URL 管理 composable
-- `docs/port-configuration.md` - 本文档
-- `docs/url-management.md` - URL 管理系统文档
+- `todo/learning-notes/technical-docs/port-configuration.md` - 本文档
+- `todo/learning-notes/technical-docs/url-management.md` - URL 管理系统文档
