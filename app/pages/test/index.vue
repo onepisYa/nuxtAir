@@ -60,6 +60,13 @@ const testPages = computed(() => [
     category: '状态管理'
   },
   {
+    title: '设计系统颜色',
+    description: '展示设计系统中使用的颜色变量和色彩规范，包括主要颜色、品牌色彩和使用指南',
+    path: '/test/design-system',
+    icon: 'lucide:palette',
+    category: '设计系统'
+  },
+  {
     title: '通用测试',
     description: '其他通用功能测试页面',
     path: '/test/test',
