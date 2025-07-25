@@ -53,6 +53,13 @@ const testPages = computed(() => [
     category: 'SEO 优化'
   },
   {
+    title: 'Pinia 状态管理测试',
+    description: '测试 Pinia 全局状态管理的各种功能，包括计数器、异步操作、Store 组合、持久化、性能测试和开发工具集成',
+    path: '/test/pinia',
+    icon: 'lucide:database',
+    category: '状态管理'
+  },
+  {
     title: '通用测试',
     description: '其他通用功能测试页面',
     path: '/test/test',
