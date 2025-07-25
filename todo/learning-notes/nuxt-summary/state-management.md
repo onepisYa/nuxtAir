@@ -1,16 +1,16 @@
 # Nuxt v4 状态管理完整指南
 
 > 📚 **参考文档**
-> - [Nuxt 4 状态管理官方文档](https://nuxt.com/docs/4.x/getting-started/state-management#best-practices) <mcreference link="https://nuxt.com/docs/getting-started/state-management" index="1">1</mcreference>
-> - [Pinia SSR Nuxt 集成指南](https://pinia.vuejs.org/ssr/nuxt.html) <mcreference link="https://pinia.vuejs.org/ssr/nuxt.html" index="2">2</mcreference>
-> - [useState API 详细文档](https://nuxt.com/docs/4.x/api/composables/use-state) <mcreference link="https://nuxt.com/docs/4.x/api/composables/use-state" index="3">3</mcreference>
+> - [Nuxt 4 状态管理官方文档](https://nuxt.com/docs/getting-started/state-management)
+> - [Pinia SSR Nuxt 集成指南](https://pinia.vuejs.org/ssr/nuxt.html)
+> - [useState API 详细文档](https://nuxt.com/docs/4.x/api/composables/use-state)
 
 ## 🎯 核心工具：`useState` 组合式API
 
 ### 基本概念
-- **功能**：创建响应式、支持SSR（服务器端渲染）的共享状态，是`ref`的SSR友好替代方案 <mcreference link="https://nuxt.com/docs/getting-started/state-management" index="1">1</mcreference>
+- **功能**：创建响应式、支持SSR（服务器端渲染）的共享状态，是`ref`的SSR友好替代方案 [1](https://nuxt.com/docs/getting-started/state-management)
 - **特性**：其值在SSR后（客户端 hydration 阶段）会被保留，通过唯一键在所有组件间共享
-- **限制**：内部数据需可序列化为JSON，不能包含类、函数、符号等不可序列化内容 <mcreference link="https://nuxt.com/docs/4.x/api/composables/use-state" index="3">3</mcreference>
+- **限制**：内部数据需可序列化为JSON，不能包含类、函数、符号等不可序列化内容 [3](https://nuxt.com/docs/4.x/api/composables/use-state)
 
 ### 语法格式
 ```typescript
@@ -22,7 +22,7 @@ const count = useState('counter', () => Math.round(Math.random() * 100))
 ```
 
 ### 自动键生成
-如果不提供键值，Nuxt会根据文件和行号自动生成唯一键 <mcreference link="https://nuxt.com/docs/4.x/api/composables/use-state" index="3">3</mcreference>：
+如果不提供键值，Nuxt会根据文件和行号自动生成唯一键 [3](https://nuxt.com/docs/4.x/api/composables/use-state)：
 ```typescript
 // 自动生成键值
 const count = useState(() => 0) // 键值基于文件位置自动生成
@@ -38,7 +38,7 @@ export const myState = ref({})
 // ❌ 错误：在 setup 外部定义状态
 const globalState = ref('danger')
 ```
-**风险**：会导致服务器上请求共享状态，可能引发内存泄漏和安全问题 <mcreference link="https://nuxt.com/docs/getting-started/state-management" index="1">1</mcreference>
+**风险**：会导致服务器上请求共享状态，可能引发内存泄漏和安全问题 [1](https://nuxt.com/docs/getting-started/state-management)
 
 ### ✅ 正确的做法
 ```typescript
@@ -89,7 +89,7 @@ export const useTheme = () => {
 }
 ```
 
-### 3. 异步状态初始化 <mcreference link="https://nuxt.com/docs/getting-started/state-management" index="4">4</mcreference>
+### 3. 异步状态初始化 [4](https://nuxt.com/docs/getting-started/state-management)
 ```typescript
 // app.vue 或页面组件中
 <script setup>
@@ -103,7 +103,7 @@ await callOnce(async () => {
 ```
 
 ### 4. 浅层响应式优化
-对于大型对象，可以使用 `shallowRef` 优化性能 <mcreference link="https://nuxt.com/docs/4.x/api/composables/use-state" index="3">3</mcreference>：
+对于大型对象，可以使用 `shallowRef` 优化性能 [3](https://nuxt.com/docs/4.x/api/composables/use-state)：
 ```typescript
 const state = useState('my-shallow-state', () => 
   shallowRef({ deep: 'not reactive' })
@@ -147,7 +147,7 @@ export const useDateFormat = () => {
 }
 ```
 
-### 2. 购物车状态管理 <mcreference link="https://sri-ram-kumar.medium.com/unlocking-the-power-of-nuxt-advanced-state-management-strategies-af30423ecb99" index="5">5</mcreference>
+### 2. 购物车状态管理 [5](https://sri-ram-kumar.medium.com/unlocking-the-power-of-nuxt-advanced-state-management-strategies-af30423ecb99)
 ```typescript
 // composables/useCart.ts
 interface CartItem {
@@ -220,7 +220,7 @@ export const useLoading = () => {
 
 ## 🎨 共享状态最佳实践
 
-### 类型安全的全局状态 <mcreference link="https://nuxt.com/docs/getting-started/state-management" index="1">1</mcreference>
+### 类型安全的全局状态 [1](https://nuxt.com/docs/getting-started/state-management)
 ```typescript
 // composables/useColor.ts
 export const useColor = () => useState<string>('color', () => 'pink')
@@ -265,7 +265,7 @@ export const usePersistedState = <T>(key: string, defaultValue: T) => {
 
 ## 🔧 第三方库支持
 
-Nuxt不强制指定状态管理方案，支持多种主流库 <mcreference link="https://nuxt.com/docs/getting-started/state-management" index="1">1</mcreference>：
+Nuxt不强制指定状态管理方案，支持多种主流库 [1](https://nuxt.com/docs/getting-started/state-management)：
 
 ### 推荐方案
 - **Pinia**（Vue官方推荐）- 现代化状态管理，完美支持TypeScript
@@ -286,7 +286,7 @@ Nuxt不强制指定状态管理方案，支持多种主流库 <mcreference link=
 
 ## 🚀 快速开始
 
-### 安装配置 <mcreference link="https://pinia.vuejs.org/ssr/nuxt.html" index="2">2</mcreference>
+### 安装配置 [2](https://pinia.vuejs.org/ssr/nuxt.html)
 ```bash
 # 推荐方式：使用 Nuxt 模块
 npx nuxi@latest module add pinia
@@ -354,7 +354,7 @@ export const useUserStore = defineStore('user', () => {
 })
 ```
 
-### 2. 在组件中使用 <mcreference link="https://pinia.vuejs.org/core-concepts/" index="3">3</mcreference>
+### 2. 在组件中使用 [3](https://pinia.vuejs.org/core-concepts/)
 ```vue
 <script setup>
 import { storeToRefs } from 'pinia'
@@ -374,7 +374,7 @@ const { login, logout } = userStore
 
 ## ⚡ 高级技巧与最佳实践
 
-### 1. 异步数据初始化 <mcreference link="https://nuxt.com/docs/getting-started/state-management" index="4">4</mcreference>
+### 1. 异步数据初始化 [4](https://nuxt.com/docs/getting-started/state-management)
 ```typescript
 // 在页面或 app.vue 中
 <script setup>
@@ -485,7 +485,7 @@ export const useUserStore = defineStore('user', (): UserState & {
 })
 ```
 
-## 🔧 自动导入配置 <mcreference link="https://pinia.vuejs.org/ssr/nuxt.html" index="1">1</mcreference>
+## 🔧 自动导入配置 [1](https://pinia.vuejs.org/ssr/nuxt.html)
 
 ### 默认自动导入
 - `usePinia()` - 获取 Pinia 实例
@@ -494,7 +494,7 @@ export const useUserStore = defineStore('user', (): UserState & {
 - `acceptHMRUpdate()` - 热更新支持
 - `stores/` 目录下的所有 Store（不包括嵌套目录）
 
-### 自定义 Store 目录 <mcreference link="https://stackoverflow.com/questions/75862614/how-to-auto-import-pinia-stores-in-nuxt" index="2">2</mcreference>
+### 自定义 Store 目录 [2](https://stackoverflow.com/questions/75862614/how-to-auto-import-pinia-stores-in-nuxt)
 ```typescript
 // nuxt.config.ts
 export default defineNuxtConfig({
@@ -508,7 +508,7 @@ export default defineNuxtConfig({
 })
 ```
 
-## 🛠️ SSR 注意事项 <mcreference link="https://pinia.vuejs.org/ssr/" index="1">1</mcreference>
+## 🛠️ SSR 注意事项 [1](https://pinia.vuejs.org/ssr/)
 
 ### 在非组件上下文中使用
 ```typescript
@@ -527,7 +527,7 @@ export default defineNuxtRouteMiddleware((to) => {
 })
 ```
 
-### Composables 集成 <mcreference link="https://pinia.vuejs.org/cookbook/composables.html" index="3">3</mcreference>
+### Composables 集成 [3](https://pinia.vuejs.org/cookbook/composables.html)
 ```typescript
 // stores/media.ts
 import { useMediaControls } from '@vueuse/core'
@@ -548,7 +548,7 @@ export const useMediaStore = defineStore('media', () => {
 })
 ```
 
-## 📱 Nuxt 2 支持 <mcreference link="https://pinia.vuejs.org/ssr/nuxt.html" index="2">2</mcreference>
+## 📱 Nuxt 2 支持 [2](https://pinia.vuejs.org/ssr/nuxt.html)
 
 ### 安装依赖
 ```bash
@@ -684,4 +684,133 @@ export default {
 
 ---
 
-> 💡 **提示**: 本文档基于 Nuxt 4 和 Pinia 最新版本编写，建议结合实际项目需求选择合适的状态管理方案。对于大型应用，推荐使用 Pinia；对于简单状态共享，`useState` 已经足够。
+## 🧪 项目实践：Pinia 测试平台
+
+### 项目结构
+本项目包含一个完整的 Pinia 状态管理测试平台，位于 `/app/pages/test/pinia/` 目录下：
+
+- 说明文件在 [Pinia 状态管理测试平台说明](../../../todo/learning-notes/technical-docs/pinia-state-management-requirements.md)
+
+```
+app/pages/test/pinia/
+├── index.vue          # 主测试页面，功能导航和状态预览
+├── counter.vue        # Counter Store 基础功能测试
+├── async.vue          # 异步操作和 API 集成测试
+├── composition.vue    # 多 Store 组合和协作测试
+├── persistence.vue    # 数据持久化功能测试
+├── performance.vue    # 性能优化和响应测试
+└── devtools.vue       # DevTools 集成和调试测试
+```
+
+### Store 实现
+项目中实现了两个主要的 Store：
+
+#### Counter Store (`/app/stores/counter.ts`)
+```typescript
+export const useCounterStore = defineStore('counter', () => {
+  // 状态
+  const count = ref<number>(0)
+  const loading = ref<boolean>(false)
+  const error = ref<string | null>(null)
+  
+  // 计算属性
+  const doubleCount = computed(() => count.value * 2)
+  const isEven = computed(() => count.value % 2 === 0)
+  const isPositive = computed(() => count.value > 0)
+  
+  // 基本操作
+  const increment = () => count.value++
+  const decrement = () => count.value--
+  const reset = () => {
+    count.value = 0
+    error.value = null
+  }
+  
+  // 异步操作
+  const fetchAndSetCount = async () => {
+    loading.value = true
+    try {
+      const response = await $fetch('/test-api/posts/1')
+      count.value = response.id
+    } catch (err) {
+      error.value = err.message
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  return {
+    count, loading, error,
+    doubleCount, isEven, isPositive,
+    increment, decrement, reset,
+    fetchAndSetCount
+  }
+}, {
+  persist: {
+    key: 'counter-store',
+    pick: ['count']
+  }
+})
+```
+
+#### User Store (`/app/stores/user.ts`)
+```typescript
+export const useUserStore = defineStore('user', () => {
+  const token = ref('')
+  const isLogin = computed(() => Boolean(token.value))
+  const info = ref({ /* 用户信息模板 */ })
+  
+  const getUserInfo = async () => {
+    try {
+      const res = await get('/business/company/getCurrentCompany')
+      info.value = res
+    } catch (e) {
+      console.error(e)
+    }
+  }
+  
+  const logout = async () => {
+    try {
+      await post('/auth/logout')
+      clear()
+      return navigateTo('/?callback=success&message=退出成功')
+    } catch (e) {
+      console.error('退出失败:', e)
+    }
+  }
+  
+  const clear = () => {
+    token.value = ''
+    info.value = { /* 重置为模板 */ }
+  }
+  
+  return { getUserInfo, clear, logout, isLogin, token, info }
+}, { persist: true })
+```
+
+### 测试功能特性
+
+1. **基础状态管理**：计数器的增减、重置、自定义设置
+2. **计算属性**：双倍值、奇偶性、正负性的自动计算
+3. **异步操作**：模拟 API 请求，包含加载状态和错误处理
+4. **状态持久化**：使用 Nuxt useCookie API 进行 Cookie 存储
+5. **Store 组合**：多个 Store 之间的数据共享和状态同步
+6. **性能测试**：大量数据更新的响应性能测试
+7. **开发工具**：Vue DevTools 集成和状态调试
+
+### 访问测试平台
+在开发环境中，可以通过以下路径访问测试平台：
+- 主页面：`/test/pinia`
+- 各功能模块：`/test/pinia/{module-name}`
+
+### 学习建议
+1. 从 Counter 测试开始，理解基础的状态管理概念
+2. 通过异步操作测试学习 API 集成和错误处理
+3. 使用 Store 组合测试了解多 Store 协作模式
+4. 通过持久化测试掌握数据存储技巧
+5. 利用性能测试了解优化策略
+6. 使用 DevTools 测试提升调试技能
+
+---
+
+> 💡 **提示**: 本文档基于 Nuxt 4 和 Pinia 最新版本编写，建议结合实际项目需求选择合适的状态管理方案。对于大型应用，推荐使用 Pinia；对于简单状态共享，`useState` 已经足够。项目中的测试平台提供了完整的实践示例，可以作为学习和开发的参考。
