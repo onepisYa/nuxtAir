@@ -23,7 +23,7 @@
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div class="bg-blue-50 rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-blue-600">{{ performanceMetrics.responseTime }}ms</div>
+                <div class="text-2xl font-bold text-blue-600">{{ averageResponseTime }}ms</div>
                 <div class="text-sm text-gray-600">平均响应时间</div>
               </div>
               <div class="bg-green-50 rounded-lg p-4 text-center">
@@ -424,11 +424,16 @@ const minResponseTime = computed(() => {
   return responseTimeHistory.value.length > 0 ? Math.min(...responseTimeHistory.value) : 0
 })
 
-// 性能优化建议
+// 性能优化建议 - 使用防抖优化
 const performanceSuggestions = computed(() => {
+  // 减少计算频率，只在必要时更新
+  const avgTime = averageResponseTime.value
+  const renderCount = performanceMetrics.renderCount
+  const historyLength = responseTimeHistory.value.length
+  
   const suggestions = []
   
-  if (averageResponseTime.value > 100) {
+  if (avgTime > 100) {
     suggestions.push({
       id: 'slow-response',
       type: 'warning',
@@ -436,7 +441,7 @@ const performanceSuggestions = computed(() => {
       title: '响应时间较慢',
       description: '平均响应时间超过 100ms，考虑优化操作逻辑'
     })
-  } else {
+  } else if (avgTime > 0) {
     suggestions.push({
       id: 'good-response',
       type: 'good',
@@ -446,7 +451,7 @@ const performanceSuggestions = computed(() => {
     })
   }
   
-  if (performanceMetrics.renderCount > 100) {
+  if (renderCount > 100) {
     suggestions.push({
       id: 'high-render',
       type: 'critical',
@@ -456,7 +461,7 @@ const performanceSuggestions = computed(() => {
     })
   }
   
-  if (responseTimeHistory.value.length > 50) {
+  if (historyLength > 50) {
     suggestions.push({
       id: 'memory-usage',
       type: 'warning',
@@ -494,11 +499,12 @@ const recordResponseTime = (time) => {
     responseTimeHistory.value = responseTimeHistory.value.slice(-100)
   }
   
-  // 更新平均响应时间
-  performanceMetrics.responseTime = averageResponseTime.value
+  // 移除直接更新 performanceMetrics.responseTime，避免循环依赖
+  // performanceMetrics.responseTime 将通过模板中的 averageResponseTime 计算属性显示
 }
 
 // 执行操作并测量性能
+let lastUpdateTime = 0
 const performOperation = (operation, ...args) => {
   const startTime = performance.now()
   
@@ -517,8 +523,12 @@ const performOperation = (operation, ...args) => {
       operationStats.decrement++
     }
     
-    // 更新每秒操作数
-    updateOperationsPerSecond()
+    // 限制更新频率，避免过于频繁的响应式更新
+    const now = Date.now()
+    if (now - lastUpdateTime > 100) { // 每100ms最多更新一次
+      updateOperationsPerSecond()
+      lastUpdateTime = now
+    }
     
   } catch (error) {
     addTestHistory(operation, 'error', error.message)
@@ -549,9 +559,10 @@ const performAsyncOperation = async (operation) => {
 }
 
 // 更新每秒操作数
+let operationStartTime = Date.now()
 const updateOperationsPerSecond = () => {
   const totalOps = operationStats.increment + operationStats.decrement + operationStats.async
-  const timeElapsed = (Date.now() - startTime) / 1000
+  const timeElapsed = (Date.now() - operationStartTime) / 1000
   performanceMetrics.operationsPerSecond = Math.round(totalOps / Math.max(timeElapsed, 1))
 }
 
@@ -712,16 +723,16 @@ const startContinuousMonitoring = () => {
   isMonitoring.value = true
   
   monitoringInterval.value = setInterval(() => {
-    // 更新内存使用（模拟）
-    if (process.client && performance.memory) {
+    // 更新内存使用（模拟）- 减少频率
+    if (isClient && performance.memory) {
       performanceMetrics.memoryUsage = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)
     } else {
       performanceMetrics.memoryUsage = Math.round(Math.random() * 50 + 10)
     }
     
-    // 更新操作频率
+    // 减少操作频率更新的频率
     updateOperationsPerSecond()
-  }, 1000)
+  }, 2000) // 改为2秒更新一次，减少性能压力
   
   addTestHistory('连续监控', 'info', '开始连续性能监控')
 }
@@ -742,7 +753,7 @@ const stopContinuousMonitoring = () => {
 
 // 重置所有指标
 const resetAllMetrics = () => {
-  performanceMetrics.responseTime = 0
+  // 移除 performanceMetrics.responseTime = 0，因为它现在通过计算属性显示
   performanceMetrics.operationsPerSecond = 0
   performanceMetrics.memoryUsage = 0
   performanceMetrics.renderCount = 0
@@ -784,12 +795,14 @@ const exportPerformanceData = () => {
   }
 }
 
-// 记录开始时间
-const startTime = Date.now()
+// 记录页面加载时间
+const pageLoadTime = Date.now()
 
-// 监听渲染次数
+// 使用 onUpdated 钩子统计渲染次数，通过 toRaw 避免响应式更新
 onUpdated(() => {
-  performanceMetrics.renderCount++
+  // 使用 toRaw 获取非代理对象，避免触发响应式更新
+  const rawMetrics = toRaw(performanceMetrics)
+  rawMetrics.renderCount++
 })
 
 // 组件挂载时初始化

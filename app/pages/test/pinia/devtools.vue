@@ -468,10 +468,10 @@
             <div class="space-y-4">
               <!-- 用户信息显示 -->
               <div class="bg-green-50 rounded-lg p-4">
-                <div v-if="userStore.currentUser" class="text-center">
-                  <div class="text-lg font-bold text-green-600 mb-1">{{ userStore.currentUser.name }}</div>
-                  <div class="text-sm text-gray-600">{{ userStore.currentUser.email }}</div>
-                  <div class="text-xs text-gray-500 mt-1">ID: {{ userStore.currentUser.id }}</div>
+                <div v-if="userStore.isLogin" class="text-center">
+                  <div class="text-lg font-bold text-green-600 mb-1">{{ userStore.info.entname || '测试用户' }}</div>
+                  <div class="text-sm text-gray-600">{{ userStore.info.contactName || '联系人' }}</div>
+                  <div class="text-xs text-gray-500 mt-1">ID: {{ userStore.info.id || 'N/A' }}</div>
                 </div>
                 <div v-else class="text-center text-gray-500">
                   未登录
@@ -481,8 +481,8 @@
               <!-- 用户操作 -->
               <div class="space-y-2">
                 <button 
-                  @click="performUserAction('login', { id: 1, name: 'Test User', email: 'test@example.com' })"
-                  :disabled="!!userStore.currentUser"
+                  @click="performUserAction('login', { id: 1, entname: '测试企业', contactName: '测试联系人' })"
+                  :disabled="userStore.isLogin"
                   class="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white py-2 px-4 rounded-lg transition-colors"
                 >
                   模拟登录
@@ -490,15 +490,15 @@
                 
                 <button 
                   @click="performUserAction('logout')"
-                  :disabled="!userStore.currentUser"
+                  :disabled="!userStore.isLogin"
                   class="w-full bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white py-2 px-4 rounded-lg transition-colors"
                 >
                   退出登录
                 </button>
                 
                 <button 
-                  @click="performUserAction('updateProfile', { name: 'Updated User' })"
-                  :disabled="!userStore.currentUser"
+                  @click="performUserAction('updateProfile', { entname: '更新企业名称' })"
+                  :disabled="!userStore.isLogin"
                   class="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white py-2 px-4 rounded-lg transition-colors"
                 >
                   更新资料
@@ -609,7 +609,7 @@ useHead({
 
 // 导入 Stores
 const counterStore = useCounterStore()
-const userStore = user()
+const userStore = useUserStore()
 
 // 响应式数据
 const isListening = ref(false)
@@ -675,9 +675,9 @@ const refreshStoreStates = () => {
   }
   
   userStoreState.value = {
-    currentUser: userStore.currentUser,
-    isLoggedIn: userStore.isLoggedIn,
-    preferences: userStore.preferences
+    isLogin: userStore.isLogin,
+    token: userStore.token,
+    info: userStore.info
   }
 }
 
@@ -706,10 +706,10 @@ const restoreSnapshot = (index) => {
   counterStore.setCount(snapshot.counter.count)
   
   // 恢复 User Store
-  if (snapshot.user.currentUser) {
-    userStore.login(snapshot.user.currentUser)
+  if (snapshot.user.isLogin && snapshot.user.info) {
+    simulateLogin(snapshot.user.info)
   } else {
-    userStore.logout()
+    simulateLogout()
   }
   
   refreshStoreStates()
@@ -766,10 +766,10 @@ const timeTravelBackward = () => {
     // 恢复到指定状态
     counterStore.setCount(action.state.counter.count)
     
-    if (action.state.user.currentUser) {
-      userStore.login(action.state.user.currentUser)
+    if (action.state.user.isLogin && action.state.user.info) {
+      simulateLogin(action.state.user.info)
     } else {
-      userStore.logout()
+      simulateLogout()
     }
     
     refreshStoreStates()
@@ -787,10 +787,10 @@ const timeTravelForward = () => {
     // 恢复到指定状态
     counterStore.setCount(action.state.counter.count)
     
-    if (action.state.user.currentUser) {
-      userStore.login(action.state.user.currentUser)
+    if (action.state.user.isLogin && action.state.user.info) {
+      simulateLogin(action.state.user.info)
     } else {
-      userStore.logout()
+      simulateLogout()
     }
     
     refreshStoreStates()
@@ -858,12 +858,35 @@ const performCounterAction = async (action, ...args) => {
   }
 }
 
+// 模拟登录函数
+const simulateLogin = (userData) => {
+  // 模拟设置用户数据到 userStore
+  userStore.token = 'mock-token-' + Date.now()
+  userStore.info = { ...userStore.info, ...userData }
+}
+
+// 模拟退出登录函数
+const simulateLogout = () => {
+  // 模拟清除用户数据
+  userStore.clear()
+}
+
 // 执行 User Store 动作
 const performUserAction = async (action, ...args) => {
   const startTime = performance.now()
   
   try {
-    if (typeof userStore[action] === 'function') {
+    // 使用模拟函数替代原来的 userStore 方法
+    if (action === 'login') {
+      simulateLogin(args[0])
+    } else if (action === 'logout') {
+      simulateLogout()
+    } else if (action === 'updateProfile') {
+      // 模拟更新用户资料
+      if (userStore.isLogin && args[0]) {
+        userStore.info = { ...userStore.info, ...args[0] }
+      }
+    } else if (typeof userStore[action] === 'function') {
       await userStore[action](...args)
     }
     
@@ -935,7 +958,7 @@ const triggerComplexAction = async () => {
   await performCounterAction('increment')
   await new Promise(resolve => setTimeout(resolve, 100))
   await performCounterAction('incrementBy', 10)
-  await performUserAction('login', { id: 2, name: 'Complex User', email: 'complex@example.com' })
+  await performUserAction('login', { id: 2, entname: '复杂操作企业', contactName: '复杂用户' })
   await performCounterAction('fetchAndSetCount')
 }
 
@@ -967,7 +990,7 @@ const batchOperations = async () => {
     () => performCounterAction('increment'),
     () => performCounterAction('decrement'),
     () => performCounterAction('incrementBy', 5),
-    () => performUserAction('updateProfile', { name: 'Batch User' })
+    () => performUserAction('updateProfile', { entname: '批量操作企业' })
   ]
   
   for (const operation of operations) {
@@ -979,7 +1002,7 @@ const batchOperations = async () => {
 // 重置所有 Store
 const resetAllStores = () => {
   counterStore.reset()
-  userStore.logout()
+  simulateLogout()
   refreshStoreStates()
   addToHistory('RESET_ALL', '重置所有 Store')
 }
@@ -1050,8 +1073,8 @@ const importDebugData = (event) => {
         if (data.currentStates.counter) {
           counterStore.setCount(data.currentStates.counter.count || 0)
         }
-        if (data.currentStates.user && data.currentStates.user.currentUser) {
-          userStore.login(data.currentStates.user.currentUser)
+        if (data.currentStates.user && data.currentStates.user.isLogin && data.currentStates.user.info) {
+          simulateLogin(data.currentStates.user.info)
         }
       }
       

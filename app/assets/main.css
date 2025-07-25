@@ -2,12 +2,17 @@
 @import "@nuxt/ui";
 
 @theme static {
+
+/* 设计系统颜色变量 */
+--color-senix-blue: #44687D;
+--color-senix-orange: #E24912;
+--color-senix-grey: #575A5D;
   /* --ui-container: 1200px; */
   /* --color-primary: #57b878; */
-  --color-primary: #B56959;
+  --color-primary: var(--color-senix-blue); /* senix-blue 作为主色调,显得更专业和可靠 */
   --color-success: #007c4d;
-  --color-info: #47b78e;
-  --color-secondary: #00b0ec;
+  --color-info: var(--color-senix-orange); /* senix-orange 作为信息色,能够突出重要信息 */
+  --color-secondary: var(--color-senix-grey); /* senix-grey 作为次要色调 */
   --ui-text: #000;
 }
 @layer components {
