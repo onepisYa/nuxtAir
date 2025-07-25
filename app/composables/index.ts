@@ -9,7 +9,7 @@ export function decodeHtmlEntities(text: string): string {
   return he.decode(text)
 }
 
-export const user = useUserStore
+export const user = () => useUserStore()
 export const delHtmlTag = (html: string) => decodeHtmlEntities(html.replace(/<[^>]+>/g, ''))
 export const dayjs = useDayjs()
 export const parseDate = (date: string) => dayjs(date).format('YYYY-MM-DD')
