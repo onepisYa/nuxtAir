@@ -131,7 +131,9 @@ out
 .yarn/install-state.gz
 .pnp.*
 
+
 # ----------
+.git-backup
 alova.config.js
 app/service-alova/api-auto
 /app/pages/test/alova-auto-test

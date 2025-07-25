@@ -74,8 +74,9 @@
 - [x] 处理 sitemap `/api/__sitemap__/urls`
 - [x] alova 相关的 composables 自导导入配置 
 - [x] composables 的批量导出、这样我们所有的 composables 都能享受 nuxt 的自动导入了
-
-
+- [x] pinia 全局状态管理的测试、比如写个 counter 来测试、并且在 /app/test/ 创建 pinia 相关的测试页面
+- [x] 颜色 token 处理
+  - [x] 🚧 设计系统颜色展示
 
 
 # 可选项
@@ -145,14 +146,14 @@
 
 
 
-- 🚧 alova 自动生成的 api  进行测试(比如注册和登录)
-- 🚧 git 仓库处理
-  - 尽快处理（隔离开来之后我可以开始写业务了）
 - 🚧 导入本地字体
 - 🚧 删除 user store 因为目前我们还用不到这个东西、后面需要也要完全重写的。
 
 # 暂时仅处理以下待办
 
-- [x] pinia 全局状态管理的测试、比如写个 counter 来测试、并且在 /app/test/ 创建 pinia 相关的测试页面
-- [x] 颜色 token 处理
-  - [ ] 🚧 设计系统颜色展示
+- 🚧 git 仓库处理
+  - 尽快处理（隔离开来之后我可以开始写业务了）
+
+- [ ] 自动生成的 api 的 alova 实例替换。
+
+- 🚧 alova 自动生成的 api  进行测试(比如注册和登录)
